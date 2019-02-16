@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class AppComponent {
   token: string = null;
-  key = '${process.env.TRELLO_API_KEY}';
+  key = '08c1c082c7cb12602cdccdbc55428bad';
 
   boards: Observable<any[]>;
   constructor(public http: HttpClient) {
