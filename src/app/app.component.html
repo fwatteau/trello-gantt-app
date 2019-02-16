@@ -1,0 +1,11 @@
+<h1>Trello Example</h1>
+<div *ngIf="token; else needToLogin">
+  <h2>My Trello Boards</h2>
+  <div *ngFor="let board of boards | async">
+    {{board.name}}
+  </div>
+</div>
+<ng-template #needToLogin>
+
+<button (click)="login()">Login</button>
+</ng-template>
