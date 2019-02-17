@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 
 import { Observable } from 'rxjs';
 import "dhtmlx-gantt";
-import {} from "@types/dhtmlxgantt";
+// import {} from "@types/dhtmlxgantt";
 import {TaskService} from "../service/task.service";
 import {TrelloService} from "../service/trello.service";
 
