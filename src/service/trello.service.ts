@@ -1,6 +1,8 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs/index";
+import {Board} from "../model/board";
+import {Card} from "../model/card";
 
 @Injectable()
 export class TrelloService {
@@ -37,9 +39,9 @@ export class TrelloService {
      *
      * @returns {Observable<any>}
      */
-    getBoards(): Observable<any> {
-        const path = `https://api.trello.com/1//member/me/boards?key=${this.key}&token=${this.token}`;
-        return this.http.get<any>(path);
+    getBoards(): Observable<Board[]> {
+        const path = `https://api.trello.com/1//member/me/boards?members=all&key=${this.key}&token=${this.token}`;
+        return this.http.get<Board[]>(path);
     }
 
     /**
@@ -48,8 +50,8 @@ export class TrelloService {
      * @param {string} boardId
      * @returns {Observable<any>}
      */
-    getCards(boardId: string): Observable<any> {
-        const path = `https://api.trello.com/1/boards/${boardId}/cards?key=${this.key}&token=${this.token}`;
-        return this.http.get<any>(path);
+    getCards(boardId: string): Observable<Card[]> {
+        const path = `https://api.trello.com/1/boards/${boardId}/cards?customFieldItems=true&key=${this.key}&token=${this.token}`;
+        return this.http.get<Card[]>(path);
     }
 }

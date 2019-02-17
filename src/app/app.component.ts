@@ -2,9 +2,11 @@ import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 
 import { Observable } from 'rxjs';
 import "dhtmlx-gantt";
-// import {} from "@types/dhtmlxgantt";
 import {TaskService} from "../service/task.service";
 import {TrelloService} from "../service/trello.service";
+import {Board} from "../model/board";
+import {Card} from "../model/card";
+
 
 @Component({
   selector: 'my-app',
@@ -12,11 +14,10 @@ import {TrelloService} from "../service/trello.service";
   providers: [TaskService, TrelloService]
 })
 export class AppComponent implements OnInit {
-  token: string = null;
   @ViewChild("gantt_here") ganttContainer: ElementRef;
-
-  boards: Observable<any[]>;
-  boardSelected: string = "";
+  boards: Observable<Board[]>;
+  boardSelected: Board = new Board();
+  memberFiltered: any;
 
   constructor(private taskService: TaskService, private trelloService: TrelloService) {
 
@@ -27,34 +28,39 @@ export class AppComponent implements OnInit {
 
     this.boards = this.trelloService.getBoards();
     this.boards.subscribe((b) => {
-        if (b[0]) this.boardSelected = b[0].id;
+        if (b[0]) {
+          this.boardSelected = b[0];
+        }
         this.updateGantt();
     });
 
     gantt.config.xml_date = "%d-%m-%Y";
+    gantt.config.scale_unit = "week";
+    gantt.config.date_scale = "S%W (%M %Y)";
+    gantt.config.readonly = true;
+    gantt.config.date_grid = "%d %M %Y";
 
+    gantt.templates.task_text=function(start,end,task){
+      const marker = task.marker ? "<i class=\"fas fa-skull-crossbones\"></i> " : "";
+      return task.users ?
+        marker+task.text+",<b> By:</b> "+task.users :
+        marker+task.text;
+    };
     gantt.init(this.ganttContainer.nativeElement);
   }
 
-  success() {
-    this.boards = this.trelloService.getBoards();
-    this.boards.subscribe((b) => {
-      this.boardSelected = b[0].id;
-    });
-  }
-
-  failure() {
-    console.log("Couldn't authenticate successfully.");
-  }
-
-  updateGantt() {
-  if (this.boardSelected) {
-      var cards = this.trelloService.getCards(this.boardSelected);
+  updateGantt(member?) {
+    gantt.clearAll();
+    if (this.boardSelected) {
+      const cards = this.trelloService.getCards(this.boardSelected.id);
       cards.subscribe((c) => {
-          this.taskService.get(c)
-            .then((data) => {
+        const filteredCards = c.filter((anyCard: Card) => {
+          return !this.memberFiltered || anyCard.idMembers.includes(this.memberFiltered);
+        });
+        this.taskService.get(filteredCards)
+          .then((data) => {
               gantt.parse({data});
-          });
+        });
       })
     }
   }

@@ -1,2 +1,4 @@
 /* Add application styles & imports to this file! */
 @import "../node_modules/dhtmlx-gantt/codebase/dhtmlxgantt.css";
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import url("https://use.fontawesome.com/releases/v5.7.2/css/all.css");
