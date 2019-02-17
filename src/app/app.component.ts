@@ -1,7 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 
 import { Observable } from 'rxjs';
-import "dhtmlxgantt";
+import "dhtmlx-gantt";
+import {} from "@types/dhtmlxgantt";
 import {TaskService} from "../service/task.service";
 import {TrelloService} from "../service/trello.service";
 
@@ -22,37 +23,24 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.trelloService.authorize();
+    this.trelloService.authorize();
 
-    gantt.config.xml_date = "%d-%m-%Y %H:%i";
+    this.boards = this.trelloService.getBoards();
+    this.boards.subscribe((b) => {
+        if (b[0]) this.boardSelected = b[0].id;
+        this.updateGantt();
+    });
+
+    gantt.config.xml_date = "%d-%m-%Y";
 
     gantt.init(this.ganttContainer.nativeElement);
   }
 
-  login() {
-    if (window['Trello']) {
-      // this.trelloService.authorize(this.success, this.failure);
-        window['Trello'].authorize({
-            type: 'popup',
-            name: 'Gantt App',
-            scope: {
-                read: 'true',
-                write: 'false'
-            },
-            expiration: 'never',
-            success: () => {this.success()},
-            error: () => {this.failure()},
-        });
-    } else {
-      console.log('Trello does not exist.');
-    }
-  }
-
   success() {
     this.boards = this.trelloService.getBoards();
-      this.boards.subscribe(() => {
-         this.boardSelected = this.boards[0];
-      });
+    this.boards.subscribe((b) => {
+      this.boardSelected = b[0].id;
+    });
   }
 
   failure() {
@@ -64,8 +52,8 @@ export class AppComponent implements OnInit {
       var cards = this.trelloService.getCards(this.boardSelected);
       cards.subscribe((c) => {
           this.taskService.get(c)
-            .then(([data, links]) => {
-              gantt.parse({data, links});
+            .then((data) => {
+              gantt.parse({data});
           });
       })
     }

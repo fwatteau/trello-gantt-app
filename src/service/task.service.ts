@@ -14,14 +14,15 @@ export class TaskService {
             const t = new Task();
             t.id = card.id;
             t.text = card.name;
-            t.start_date = "15-04-2017 00:00";
-            t.progress = 0.2;
+            t.start_date = new Date(card.due).toLocaleDateString("fr-FR");
+            t.duration = 5;
+            t.progress = 1;
             if (card.labels && card.labels[0]) {
                 t.color = card.labels[0].color;
             }
 
             myTasks.push(t);
-        })
+        });
 
         return Promise.resolve(myTasks);
     }

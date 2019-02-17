@@ -11,9 +11,12 @@ export class TrelloService {
 
     }
 
+    /**
+     * Authentification avec Trello
+     */
     authorize() {
         window['Trello'].authorize({
-            type: 'popup',
+            type: 'redirect',
             name: 'Gantt App',
             scope: {
                 read: 'true',
@@ -29,11 +32,22 @@ export class TrelloService {
         });
     }
 
+    /**
+     * Récupération des tableaux de l'utilisateur connecté
+     *
+     * @returns {Observable<any>}
+     */
     getBoards(): Observable<any> {
         const path = `https://api.trello.com/1//member/me/boards?key=${this.key}&token=${this.token}`;
         return this.http.get<any>(path);
     }
 
+    /**
+     * Récupération des cartes du tableau passé en paramètre
+     *
+     * @param {string} boardId
+     * @returns {Observable<any>}
+     */
     getCards(boardId: string): Observable<any> {
         const path = `https://api.trello.com/1/boards/${boardId}/cards?key=${this.key}&token=${this.token}`;
         return this.http.get<any>(path);
