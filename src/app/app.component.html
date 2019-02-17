@@ -1,10 +1,17 @@
 <h1>Trello Example</h1>
+
 <div *ngIf="token; else needToLogin">
   <h2>My Trello Boards</h2>
-  <div *ngFor="let board of boards | async">
-    {{board.name}}
-  </div>
+
+  <select [(ngModel)]="boardSelected" (change)="updateGantt()">
+    <option *ngFor="let board of boards | async" [value]="board.id">
+      {{board.name}}
+    </option>
+  </select>
 </div>
 <ng-template #needToLogin>
 <button (click)="login()">Login</button>
 </ng-template>
+
+<div #gantt_here style='width: 100%; height: 100%;'></div>
+
