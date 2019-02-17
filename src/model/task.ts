@@ -8,4 +8,5 @@ export class Task {
   parent: number;
   color: string;
   marker: boolean;
+  url: string;
 }

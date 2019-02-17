@@ -40,6 +40,12 @@ export class AppComponent implements OnInit {
     gantt.config.readonly = true;
     gantt.config.date_grid = "%d %M %Y";
 
+    gantt.attachEvent("onTaskClick", function(id,e){
+      const t = this.getTask(id);
+      window.open(t.url,"cardWindow");
+      return true;
+    });
+
     gantt.templates.task_text=function(start,end,task){
       const marker = task.marker ? "<i class=\"fas fa-skull-crossbones\"></i> " : "";
       return task.users ?

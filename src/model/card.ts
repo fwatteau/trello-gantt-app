@@ -8,4 +8,5 @@ export class Card {
   desc: string;
   idMembers: string[];
   customFieldItems: any[];
+  url: string;
 }

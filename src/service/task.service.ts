@@ -49,6 +49,7 @@ export class TaskService {
             t.color = card.labels[0].color;
         }
         t.marker = (card.idList == "5c693b018630e18cca1b075b");
+        t.url = card.url;
 
         myTasks.push(t);
       });
