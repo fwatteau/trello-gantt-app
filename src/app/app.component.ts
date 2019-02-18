@@ -6,17 +6,19 @@ import {TaskService} from "../service/task.service";
 import {TrelloService} from "../service/trello.service";
 import {Board} from "../model/board";
 import {Card} from "../model/card";
+import {Member} from "../model/member";
 
 
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
+  styles: [`form { display: flex;flex-direction: column; }`],
   providers: [TaskService, TrelloService]
 })
 export class AppComponent implements OnInit {
   @ViewChild("gantt_here") ganttContainer: ElementRef;
   boards: Observable<Board[]>;
-  boardSelected: Board = new Board();
+  boardSelected: string[];
   memberFiltered: any;
 
   constructor(private taskService: TaskService, private trelloService: TrelloService) {
@@ -29,7 +31,7 @@ export class AppComponent implements OnInit {
     this.boards = this.trelloService.getBoards();
     this.boards.subscribe((b) => {
         if (b[0]) {
-          this.boardSelected = b[0];
+          this.boardSelected = [b[0].id];
         }
         this.updateGantt();
     });
@@ -55,10 +57,10 @@ export class AppComponent implements OnInit {
     gantt.init(this.ganttContainer.nativeElement);
   }
 
-  updateGantt(member?) {
+  updateGantt() {
     gantt.clearAll();
     if (this.boardSelected) {
-      const cards = this.trelloService.getCards(this.boardSelected.id);
+      const cards = this.trelloService.getCards(this.boardSelected);
       cards.subscribe((c) => {
         const filteredCards = c.filter((anyCard: Card) => {
           return !this.memberFiltered || anyCard.idMembers.includes(this.memberFiltered);

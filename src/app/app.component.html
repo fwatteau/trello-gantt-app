@@ -2,13 +2,13 @@
 
 <form class="example-form">
   <mat-form-field>
-    <mat-select placeholder="Choisir un tableau" [(ngModel)]="boardSelected.id" (ngModelChange)="updateGantt()" name="board">
+    <mat-select placeholder="Choisir un tableau" multiple="multiple" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
       <mat-option *ngFor="let board of boards | async" [value]="board.id">
         {{board.name}}
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field *ngIf="boardSelected.members">
+  <mat-form-field *ngIf="boardSelected">
     <mat-select placeholder="Choisir un membre" [(ngModel)]="memberFiltered" (ngModelChange)="updateGantt()" name="member">
       <mat-option value="">Tous</mat-option>
       <mat-option *ngFor="let member of boardSelected.members" [value]="member.id">

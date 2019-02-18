@@ -1,8 +1,12 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs/index";
+import {from, Observable, of} from "rxjs/index";
 import {Board} from "../model/board";
 import {Card} from "../model/card";
+import {isArray} from "rxjs/internal/util/isArray";
+import {concat} from 'rxjs';
+import {concatMap} from "rxjs/internal/operators";
+
 
 @Injectable()
 export class TrelloService {
@@ -50,8 +54,16 @@ export class TrelloService {
      * @param {string} boardId
      * @returns {Observable<any>}
      */
-    getCards(boardId: string): Observable<Card[]> {
-        const path = `https://api.trello.com/1/boards/${boardId}/cards?customFieldItems=true&key=${this.key}&token=${this.token}`;
-        return this.http.get<Card[]>(path);
+    getCards(boardId: string|string[]): Observable<Card[]> {
+      if (!isArray(boardId)) {
+        boardId = [boardId];
+      }
+
+      return from(boardId).pipe(
+        concatMap(id => {
+          const path = `https://api.trello.com/1/boards/${id}/cards?customFieldItems=true&key=${this.key}&token=${this.token}`;
+          return this.http.get<Card[]>(path);
+        })
+      );
     }
 }
