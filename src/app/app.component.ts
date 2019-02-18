@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   boards: Observable<Board[]>;
   boardSelected: string[];
   memberFiltered: any;
+  allMembers: Member[] = [];
 
   constructor(private taskService: TaskService, private trelloService: TrelloService) {
 
@@ -30,10 +31,25 @@ export class AppComponent implements OnInit {
 
     this.boards = this.trelloService.getBoards();
     this.boards.subscribe((b) => {
-        if (b[0]) {
-          this.boardSelected = [b[0].id];
-        }
-        this.updateGantt();
+      if (b[0]) {
+        this.boardSelected = [b[0].id];
+      }
+
+      b.forEach((board) => {
+          // this.allMembers = this.allMembers.concat(board.members);
+        this.allMembers = [ ...this.allMembers, ...board.members];
+      });
+
+      // Remove duplicate members
+      this.allMembers = this.allMembers
+        .map(e => e.id)
+        // store the keys of the unique objects
+        .map((e, i, final) => final.indexOf(e) === i && i)
+        // eliminate the dead keys & store unique objects
+        .filter(e => this.allMembers[e]).map(e => this.allMembers[e]);
+
+
+      this.updateGantt();
     });
 
     gantt.config.xml_date = "%d-%m-%Y";

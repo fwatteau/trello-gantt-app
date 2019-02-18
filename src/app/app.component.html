@@ -11,7 +11,7 @@
   <mat-form-field *ngIf="boardSelected">
     <mat-select placeholder="Choisir un membre" [(ngModel)]="memberFiltered" (ngModelChange)="updateGantt()" name="member">
       <mat-option value="">Tous</mat-option>
-      <mat-option *ngFor="let member of boardSelected.members" [value]="member.id">
+      <mat-option *ngFor="let member of allMembers" [value]="member.id">
         {{member.fullName}}
       </mat-option>
     </mat-select>
