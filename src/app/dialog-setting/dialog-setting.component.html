@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>Configuration</h1>
+<div mat-dialog-content>
+   <mat-form-field>
+    <mat-select placeholder="Date de début" [(ngModel)]="conf.field_start_date" name="startDate">
+      <mat-option value="">Date d'échéance</mat-option>
+      <mat-option *ngFor="let customDate of customDates" [value]="customDate.id">
+        {{customDate.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Date de Fin" [(ngModel)]="conf.field_end_date" name="endDate">
+      <mat-option value="">Date d'échéance</mat-option>
+      <mat-option *ngFor="let customDate of customDates" [value]="customDate.id">
+        {{customDate.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+ </div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="conf">Ok</button>
+</div>

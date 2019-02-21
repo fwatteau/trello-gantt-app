@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Filtre</h1>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-select placeholder="Choisir un membre" [compareWith]="compareObjects" [(ngModel)]="data.memberFiltered" name="member">
+      <mat-option value="">Tous</mat-option>
+      <mat-option *ngFor="let member of data.board.members" [value]="member">
+        {{member.fullName}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="data" (click)="clean()">Effacer</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+</div>
