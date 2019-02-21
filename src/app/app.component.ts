@@ -16,7 +16,7 @@ import {Member} from "../model/member";
 
 @Component({
   selector: 'my-app',
-  styles: [`form { display: flex;flex-direction: row; } .active {color: blue}`],
+  styles: ['form { display: flex;flex-direction: row; } .active {color: blue}'],
   templateUrl: './app.component.html',
   providers: [TaskService, TrelloService]
 })
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
       const conf:BoardConfiguration = this.getConfiguration(anyBoard);
-      const dialogRef = this.dialog.open(DialogSettingComponent, { maxHeight: "50%",
+      const dialogRef = this.dialog.open(DialogSettingComponent, { maxWidth: "75%", maxHeight: "75%",
         data: conf
       });
 

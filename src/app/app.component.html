@@ -1,5 +1,4 @@
 <h2 class="mat-title">Affichage des cartes Trello sous la forme d'un Gantt</h2>
-
 <form class="example-form">
   <mat-form-field>
     <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
@@ -15,6 +14,4 @@
     <fa-icon [icon]="settingIcon" (click)="openSettingDialog()" [ngClass]="(isSettingActive() ? 'active': '')"></fa-icon>
   </button>
 </form>
-
-<div #gantt_here style='width: 100%; height: 100%;'></div>
-
+<div #gantt_here style='width: 100%; height: 80%;'></div>
