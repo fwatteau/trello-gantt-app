@@ -2,6 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 
 import { Observable } from 'rxjs';
 import "dhtmlx-gantt";
+import "dhtmlx-gantt/codebase/ext/dhtmlxgantt_tooltip"
 import {TaskService} from "../service/task.service";
 import {TrelloService} from "../service/trello.service";
 import {Board} from "../model/board";
@@ -44,7 +45,7 @@ export class AppComponent implements OnInit {
     });
 
     gantt.config.xml_date = "%d-%m-%Y";
-    gantt.config.scale_unit = "day";
+    gantt.config.scale_unit = "week";
     // gantt.config.date_scale = "S%W (%M %Y)";
     gantt.config.date_scale = "%d %M";
     gantt.config.readonly = true;
@@ -57,11 +58,17 @@ export class AppComponent implements OnInit {
     });
 
     gantt.templates.task_text=function(start,end,task){
-      const marker = task.marker ? "<i class=\"fas fa-skull-crossbones\"></i> " : "";
+      const marker = task.marker ? "<i class=\"fas " + task.marker + "\"></i> " : "";
       return task.users ?
         marker+task.text+",<b> By:</b> "+task.users :
         marker+task.text;
     };
+
+    gantt.templates.tooltip_text = function(start,end,task){
+      const marker = task.marker ? "<i class=\"fas " + task.marker + "\"></i> " : "";
+      return "<b>" + marker + task.text + "</b><br/>" + task.descr;
+    };
+
     gantt.init(this.ganttContainer.nativeElement);
   }
 
@@ -69,7 +76,7 @@ export class AppComponent implements OnInit {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
       const conf:BoardConfiguration = this.getConfiguration(anyBoard);
-      const dialogRef = this.dialog.open(DialogFilterComponent, { maxHeight: "50%",
+      const dialogRef = this.dialog.open(DialogFilterComponent, { maxHeight: "50%", maxWidth: "75%",
         data: conf
       });
 

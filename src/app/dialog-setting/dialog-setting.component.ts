@@ -13,6 +13,7 @@ export class DialogSettingComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DialogSettingComponent>,
     @Inject(MAT_DIALOG_DATA) public conf: BoardConfiguration) {
+
   }
 
   ngOnInit() {

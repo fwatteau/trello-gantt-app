@@ -16,7 +16,18 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
- </div>
+  <mat-divider></mat-divider>
+  <mat-list>
+    <h3 mat-subheader>Configuration des listes</h3>
+    <mat-list-item *ngFor="let list of conf.board.lists">
+      <h4 mat-line>
+          <i class="fas" [ngClass]="conf.markerLists[list.id]"></i>
+          {{list.name}}
+      </h4>
+      <input matInput placeholder="Expl : fa-skull-crossbones" [(ngModel)]="conf.markerLists[list.id]">
+    </mat-list-item>
+  </mat-list>
+</div>
 <div mat-dialog-actions>
   <button mat-button [mat-dialog-close]="conf">Ok</button>
 </div>

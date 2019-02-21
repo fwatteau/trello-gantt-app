@@ -6,4 +6,5 @@ export class BoardConfiguration {
   memberFiltered: Member;
   field_start_date: string;
   field_end_date: string = "due";
+  markerLists: any = {};
 }

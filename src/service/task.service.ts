@@ -50,19 +50,18 @@ export class TaskService {
           startDate = new Date(startDateItem.value.date);
         }
 
-        console.log(startDate, endDate);
-
         // Création de la tâche
         const t = new Task();
         t.id = card.id;
         t.text = card.name;
+        t.descr = card.desc;
         t.start_date = startDate.toLocaleDateString("fr-FR"); // new Date(card.due).toLocaleDateString("fr-FR");
         t.end_date = endDate.toLocaleDateString("fr-FR");
         t.progress = 1;
         if (card.labels && card.labels[0]) {
             t.color = card.labels[0].color;
         }
-        t.marker = (card.idList == "5c693b018630e18cca1b075b");
+        t.marker = conf.markerLists[card.idList];
         t.url = card.url;
 
         myTasks.push(t);

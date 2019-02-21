@@ -11,14 +11,30 @@ import {
   MatFormFieldModule,
   MatOptionModule,
   MatDialogModule,
-  MatExpansionModule, MatButtonModule, MatIconModule
+  MatExpansionModule, MatButtonModule, MatIconModule, MatDividerModule, MatInputModule, MatListModule
 } from "@angular/material";
 import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import { DialogSettingComponent } from './dialog-setting/dialog-setting.component';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, ReactiveFormsModule, HttpClientModule, BrowserAnimationsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatDialogModule, MatExpansionModule, FontAwesomeModule, MatButtonModule, MatIconModule],
+  imports:      [
+    BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    FontAwesomeModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatDialogModule,
+    MatExpansionModule,
+    MatButtonModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatDividerModule],
   declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent ],
   entryComponents: [DialogFilterComponent,DialogSettingComponent],
   bootstrap:    [ AppComponent ]

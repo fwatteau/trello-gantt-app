@@ -1,5 +1,6 @@
 import {Member} from "./member";
 import {Card} from "./card";
+import {List} from "./list";
 
 export class Board {
   id: string;
@@ -9,4 +10,5 @@ export class Board {
   url: string;
   cards: Card[];
   customFields: any[];
+  lists: List[];
 }
