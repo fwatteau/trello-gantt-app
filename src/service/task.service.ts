@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Task} from "../model/task";
 import {Card} from "../model/card";
+import {BoardConfiguration} from "../model/boardConfiguration";
 
 @Injectable()
 export class TaskService {
@@ -14,19 +15,35 @@ export class TaskService {
    * @param {Card[]} cards
    * @returns {Promise<Task[]>}
    */
-    get(cards: Card[]): Promise<Task[]>{
+    get(cards: Card[], conf: BoardConfiguration): Promise<Task[]>{
       const myTasks: Task[] = [];
       cards.forEach((card) => {
         let startDate: Date;
+        let startDateItem:any = null;
+        let endDateItem:any = null;
         let endDate = new Date(card.due);
-        let users = false;
 
-        // On récupére la date de début si elle existe
-        const startDateItem = card.customFieldItems
+        // On récupére la date de fin si elle existe
+        if (conf.field_start_date) {
+          endDateItem = card.customFieldItems
             .filter((field) => {
-              return field.idCustomField = "5c694ddcb1d8353e838dfc34";
+              return field.idCustomField === conf.field_end_date;
             })
             .pop();
+        }
+
+        if (endDateItem) {
+          endDate = new Date(endDateItem.value.date);
+        }
+
+        // On récupére la date de début si elle existe
+        if (conf.field_start_date) {
+          startDateItem = card.customFieldItems
+            .filter((field) => {
+              return field.idCustomField === conf.field_start_date;
+            })
+            .pop();
+        }
 
         if (startDateItem) {
           startDate = new Date(startDateItem.value.date);
@@ -34,9 +51,6 @@ export class TaskService {
           startDate = new Date();
           startDate.setDate(endDate.getDate() - 5);
         }
-
-        // On récupère la liste des membres
-        // TODO
 
         // Création de la tâche
         const t = new Task();

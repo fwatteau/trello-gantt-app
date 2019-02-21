@@ -6,11 +6,21 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatSelectModule, MatFormFieldModule, MatOptionModule} from "@angular/material";
+import {
+  MatSelectModule,
+  MatFormFieldModule,
+  MatOptionModule,
+  MatDialogModule,
+  MatExpansionModule, MatButtonModule, MatIconModule
+} from "@angular/material";
+import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
+import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import { DialogSettingComponent } from './dialog-setting/dialog-setting.component';
 
 @NgModule({
-  imports:      [ BrowserModule, FormsModule, ReactiveFormsModule, HttpClientModule, BrowserAnimationsModule, MatFormFieldModule, MatSelectModule, MatOptionModule],
-  declarations: [ AppComponent, HelloComponent ],
+  imports:      [ BrowserModule, FormsModule, ReactiveFormsModule, HttpClientModule, BrowserAnimationsModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatDialogModule, MatExpansionModule, FontAwesomeModule, MatButtonModule, MatIconModule],
+  declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent ],
+  entryComponents: [DialogFilterComponent,DialogSettingComponent],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

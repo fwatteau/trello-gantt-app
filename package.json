@@ -14,6 +14,9 @@
     "@angular/platform-browser": "~7.2.5",
     "@angular/platform-browser-dynamic": "~7.2.5",
     "@angular/router": "~7.2.5",
+    "@fortawesome/angular-fontawesome": "^0.3.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.15",
+    "@fortawesome/free-solid-svg-icons": "^5.7.2",
     "angular-in-memory-web-api": "^0.8.0",
     "core-js": "^2.6.5",
     "dhtmlx-gantt": "^6.0.7",
@@ -33,7 +36,7 @@
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.13.2",
     "@angular/cli": "~7.3.2",
-    "@angular/compiler-cli": "~7.2.5",
+    "@angular/compiler-cli": "^7.2.6",
     "@angular/language-service": "~7.2.5",
     "@types/dhtmlxgantt": "^6.0.2",
     "@types/jasmine": "~3.3.9",

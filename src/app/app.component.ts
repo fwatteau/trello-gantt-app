@@ -6,23 +6,26 @@ import {TaskService} from "../service/task.service";
 import {TrelloService} from "../service/trello.service";
 import {Board} from "../model/board";
 import {Card} from "../model/card";
-import {Member} from "../model/member";
-
+import {DialogFilterComponent} from "./dialog-filter/dialog-filter.component";
+import {MatDialog} from "@angular/material";
+import {BoardConfiguration} from "../model/boardConfiguration";
+import {faCog, faFilter} from '@fortawesome/free-solid-svg-icons';
+import {DialogSettingComponent} from "./dialog-setting/dialog-setting.component";
 
 @Component({
   selector: 'my-app',
+  styles: [`form { display: flex;flex-direction: row; } .active {color: blue}`],
   templateUrl: './app.component.html',
-  styles: [`form { display: flex;flex-direction: column; }`],
   providers: [TaskService, TrelloService]
 })
 export class AppComponent implements OnInit {
   @ViewChild("gantt_here") ganttContainer: ElementRef;
   boards: Observable<Board[]>;
-  boardSelected: string[];
-  memberFiltered: any;
-  allMembers: Member[] = [];
+  boardSelected: Board;
+  filterIcon = faFilter;
+  settingIcon = faCog;
 
-  constructor(private taskService: TaskService, private trelloService: TrelloService) {
+  constructor(private taskService: TaskService, private trelloService: TrelloService, private dialog: MatDialog) {
 
   }
 
@@ -31,23 +34,10 @@ export class AppComponent implements OnInit {
 
     this.boards = this.trelloService.getBoards();
     this.boards.subscribe((b) => {
+
       if (b[0]) {
-        this.boardSelected = [b[0].id];
+        this.boardSelected = b[0];
       }
-
-      b.forEach((board) => {
-          // this.allMembers = this.allMembers.concat(board.members);
-        this.allMembers = [ ...this.allMembers, ...board.members];
-      });
-
-      // Remove duplicate members
-      this.allMembers = this.allMembers
-        .map(e => e.id)
-        // store the keys of the unique objects
-        .map((e, i, final) => final.indexOf(e) === i && i)
-        // eliminate the dead keys & store unique objects
-        .filter(e => this.allMembers[e]).map(e => this.allMembers[e]);
-
 
       this.updateGantt();
     });
@@ -73,19 +63,85 @@ export class AppComponent implements OnInit {
     gantt.init(this.ganttContainer.nativeElement);
   }
 
+  openFilterDialog(): void {
+    const board = this.trelloService.getBoard(this.boardSelected.id);
+    board.subscribe((anyBoard) => {
+      const conf:BoardConfiguration = this.getConfiguration(anyBoard);
+      const dialogRef = this.dialog.open(DialogFilterComponent, { maxHeight: "50%",
+        data: conf
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) this.saveConfiguration(result);
+
+        this.updateGantt();
+      });
+    });
+  }
+
+  openSettingDialog(): void {
+    const board = this.trelloService.getBoard(this.boardSelected.id);
+    board.subscribe((anyBoard) => {
+      const conf:BoardConfiguration = this.getConfiguration(anyBoard);
+      const dialogRef = this.dialog.open(DialogSettingComponent, { maxHeight: "50%",
+        data: conf
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) this.saveConfiguration(result);
+
+        this.updateGantt();
+      });
+    });
+  }
+
   updateGantt() {
     gantt.clearAll();
+
     if (this.boardSelected) {
-      const cards = this.trelloService.getCards(this.boardSelected);
-      cards.subscribe((c) => {
-        const filteredCards = c.filter((anyCard: Card) => {
-          return !this.memberFiltered || anyCard.idMembers.includes(this.memberFiltered);
-        });
-        this.taskService.get(filteredCards)
-          .then((data) => {
-              gantt.parse({data});
+      const board = this.trelloService.getBoard(this.boardSelected.id);
+      board.subscribe((anyBoard) => {
+        const conf:BoardConfiguration = this.getConfiguration(anyBoard);
+        const cards:Observable<Card[]> = this.trelloService.getCards(anyBoard.id);
+
+        cards.subscribe((cards) => {
+          // Filtre sur les membres
+          const filteredCards = cards.filter((anyCard: Card) => {
+            return !conf.memberFiltered || anyCard.idMembers.includes(conf.memberFiltered.id);
+          });
+
+          // Ajout dans le Gantt
+          this.taskService.get(filteredCards, conf)
+            .then((data) => {
+                gantt.parse({data});
+          });
         });
       })
     }
+  }
+
+  private getConfiguration(boardSelected: Board) {
+    let json = localStorage.getItem(boardSelected.id);
+    let conf = new BoardConfiguration();
+    if (json) {
+      conf = JSON.parse(json);
+    }
+
+    conf.board = boardSelected;
+    return conf;
+  }
+
+  private saveConfiguration(conf: BoardConfiguration) {
+    localStorage.setItem(conf.board.id, JSON.stringify(conf));
+  }
+
+  private isSettingActive() {
+    const conf:BoardConfiguration = this.getConfiguration(this.boardSelected);
+    return conf.field_start_date || conf.field_end_date;
+  }
+
+  private isFilterActive() {
+    const conf:BoardConfiguration = this.getConfiguration(this.boardSelected);
+    return conf.memberFiltered;
   }
 }

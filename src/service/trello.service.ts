@@ -1,12 +1,8 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
-import {from, Observable, of} from "rxjs/index";
+import {Observable} from "rxjs/index";
 import {Board} from "../model/board";
 import {Card} from "../model/card";
-import {isArray} from "rxjs/internal/util/isArray";
-import {concat} from 'rxjs';
-import {concatMap} from "rxjs/internal/operators";
-
 
 @Injectable()
 export class TrelloService {
@@ -54,16 +50,21 @@ export class TrelloService {
      * @param {string} boardId
      * @returns {Observable<any>}
      */
-    getCards(boardId: string|string[]): Observable<Card[]> {
-      if (!isArray(boardId)) {
-        boardId = [boardId];
-      }
+    getBoard(boardId: string): Observable<Board> {
+      const pathBoard = `https://api.trello.com/1/boards/${boardId}?customFields=true&members=all&key=${this.key}&token=${this.token}`;
 
-      return from(boardId).pipe(
-        concatMap(id => {
-          const path = `https://api.trello.com/1/boards/${id}/cards?customFieldItems=true&key=${this.key}&token=${this.token}`;
-          return this.http.get<Card[]>(path);
-        })
-      );
+      return this.http.get<Board>(pathBoard);
+    }
+
+    /**
+    * Récupération des cartes du tableau passé en paramètre
+    *
+    * @param {string} boardId
+    * @returns {Observable<any>}
+    */
+    getCards(boardId: string): Observable<Card[]> {
+        const pathCards = `https://api.trello.com/1/boards/${boardId}/cards?customFieldItems=true&key=${this.key}&token=${this.token}`;
+
+        return this.http.get<Card[]>(pathCards);
     }
 }

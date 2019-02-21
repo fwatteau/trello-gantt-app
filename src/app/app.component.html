@@ -1,21 +1,19 @@
-<h2>Affichage des cartes Trello sous la forme d'un Gantt</h2>
+<h2 class="mat-title">Affichage des cartes Trello sous la forme d'un Gantt</h2>
 
 <form class="example-form">
   <mat-form-field>
-    <mat-select placeholder="Choisir un tableau" multiple="multiple" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
-      <mat-option *ngFor="let board of boards | async" [value]="board.id">
+    <mat-select placeholder="Choisir un tableau" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
+      <mat-option *ngFor="let board of boards | async" [value]="board">
         {{board.name}}
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field *ngIf="boardSelected">
-    <mat-select placeholder="Choisir un membre" [(ngModel)]="memberFiltered" (ngModelChange)="updateGantt()" name="member">
-      <mat-option value="">Tous</mat-option>
-      <mat-option *ngFor="let member of allMembers" [value]="member.id">
-        {{member.fullName}}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
+  <button mat-icon-button>
+    <fa-icon [icon]="filterIcon" (click)="openFilterDialog()" [ngClass]="(isFilterActive() ? 'active': '')"></fa-icon>
+  </button>
+  <button mat-icon-button>
+    <fa-icon [icon]="settingIcon" (click)="openSettingDialog()" [ngClass]="(isSettingActive() ? 'active': '')"></fa-icon>
+  </button>
 </form>
 
 <div #gantt_here style='width: 100%; height: 100%;'></div>
