@@ -2,7 +2,7 @@
 
 <form class="example-form">
   <mat-form-field>
-    <mat-select placeholder="Choisir un tableau" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
+    <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
       <mat-option *ngFor="let board of boards | async" [value]="board">
         {{board.name}}
       </mat-option>

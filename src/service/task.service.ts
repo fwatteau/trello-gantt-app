@@ -18,10 +18,10 @@ export class TaskService {
     get(cards: Card[], conf: BoardConfiguration): Promise<Task[]>{
       const myTasks: Task[] = [];
       cards.forEach((card) => {
-        let startDate: Date;
+        let startDate: Date = new Date(card.due);
         let startDateItem:any = null;
         let endDateItem:any = null;
-        let endDate = new Date(card.due);
+        let endDate: Date = new Date(card.due);
 
         // On récupére la date de fin si elle existe
         if (conf.field_start_date) {
@@ -35,6 +35,7 @@ export class TaskService {
         if (endDateItem) {
           endDate = new Date(endDateItem.value.date);
         }
+        endDate.setHours(24);
 
         // On récupére la date de début si elle existe
         if (conf.field_start_date) {
@@ -47,10 +48,9 @@ export class TaskService {
 
         if (startDateItem) {
           startDate = new Date(startDateItem.value.date);
-        } else {
-          startDate = new Date();
-          startDate.setDate(endDate.getDate() - 5);
         }
+
+        console.log(startDate, endDate);
 
         // Création de la tâche
         const t = new Task();

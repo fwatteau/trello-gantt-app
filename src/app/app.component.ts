@@ -11,6 +11,7 @@ import {MatDialog} from "@angular/material";
 import {BoardConfiguration} from "../model/boardConfiguration";
 import {faCog, faFilter} from '@fortawesome/free-solid-svg-icons';
 import {DialogSettingComponent} from "./dialog-setting/dialog-setting.component";
+import {Member} from "../model/member";
 
 @Component({
   selector: 'my-app',
@@ -43,8 +44,9 @@ export class AppComponent implements OnInit {
     });
 
     gantt.config.xml_date = "%d-%m-%Y";
-    gantt.config.scale_unit = "week";
-    gantt.config.date_scale = "S%W (%M %Y)";
+    gantt.config.scale_unit = "day";
+    // gantt.config.date_scale = "S%W (%M %Y)";
+    gantt.config.date_scale = "%d %M";
     gantt.config.readonly = true;
     gantt.config.date_grid = "%d %M %Y";
 
@@ -121,26 +123,34 @@ export class AppComponent implements OnInit {
   }
 
   private getConfiguration(boardSelected: Board) {
-    let json = localStorage.getItem(boardSelected.id);
     let conf = new BoardConfiguration();
-    if (json) {
-      conf = JSON.parse(json);
+
+    if (boardSelected) {
+      let json = localStorage.getItem(boardSelected.id);
+
+      if (json) {
+        conf = JSON.parse(json);
+      }
     }
 
     conf.board = boardSelected;
     return conf;
   }
 
+  public compareBoard(o1: Board, o2: Board): boolean {
+    return o1 && o2 && o1.id === o2.id;
+  }
+
   private saveConfiguration(conf: BoardConfiguration) {
     localStorage.setItem(conf.board.id, JSON.stringify(conf));
   }
 
-  private isSettingActive() {
+  public isSettingActive() {
     const conf:BoardConfiguration = this.getConfiguration(this.boardSelected);
     return conf.field_start_date || conf.field_end_date;
   }
 
-  private isFilterActive() {
+  public isFilterActive() {
     const conf:BoardConfiguration = this.getConfiguration(this.boardSelected);
     return conf.memberFiltered;
   }
