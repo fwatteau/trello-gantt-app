@@ -13,6 +13,7 @@ import {BoardConfiguration} from "../model/boardConfiguration";
 import {faCog, faFilter} from '@fortawesome/free-solid-svg-icons';
 import {DialogSettingComponent} from "./dialog-setting/dialog-setting.component";
 import {Member} from "../model/member";
+import {List} from "../model/list";
 
 @Component({
   selector: 'my-app',
@@ -76,7 +77,10 @@ export class AppComponent implements OnInit {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
       const conf:BoardConfiguration = this.getConfiguration(anyBoard);
-      const dialogRef = this.dialog.open(DialogFilterComponent, { maxHeight: "50%", maxWidth: "75%",
+      const dialogRef = this.dialog.open(DialogFilterComponent, {
+        maxHeight: "50%",
+        maxWidth: "75%",
+        minWidth: "50%",
         data: conf
       });
 
@@ -92,7 +96,10 @@ export class AppComponent implements OnInit {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
       const conf:BoardConfiguration = this.getConfiguration(anyBoard);
-      const dialogRef = this.dialog.open(DialogSettingComponent, { maxWidth: "75%", maxHeight: "75%",
+      const dialogRef = this.dialog.open(DialogSettingComponent, {
+        minWidth: "50%",
+        maxWidth: "75%",
+        maxHeight: "75%",
         data: conf
       });
 
@@ -114,9 +121,11 @@ export class AppComponent implements OnInit {
         const cards:Observable<Card[]> = this.trelloService.getCards(anyBoard.id);
 
         cards.subscribe((cards) => {
-          // Filtre sur les membres
+          // Filtre sur les membres, les listes ou le nom de la carte
           const filteredCards = cards.filter((anyCard: Card) => {
-            return !conf.memberFiltered || anyCard.idMembers.includes(conf.memberFiltered.id);
+            return (!conf.filter.members.length || anyCard.idMembers.filter((value: string) => conf.filter.members.includes(value)).length)
+              && (!conf.filter.lists.length || conf.filter.lists.includes(anyCard.idList))
+              && (!conf.filter.name || !anyCard.name.search(new RegExp(conf.filter.name, "i")));
           });
 
           // Ajout dans le Gantt
@@ -159,6 +168,6 @@ export class AppComponent implements OnInit {
 
   public isFilterActive() {
     const conf:BoardConfiguration = this.getConfiguration(this.boardSelected);
-    return conf.memberFiltered;
+    return conf.filter.members.length || conf.filter.lists.length || conf.filter.name;
   }
 }
