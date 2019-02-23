@@ -9,5 +9,6 @@ export class Task {
   parent: number;
   color: string;
   marker: boolean;
+  stickers: string[] = [];
   url: string;
 }

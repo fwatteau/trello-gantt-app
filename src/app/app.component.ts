@@ -12,12 +12,11 @@ import {MatDialog} from "@angular/material";
 import {BoardConfiguration} from "../model/boardConfiguration";
 import {faCog, faFilter} from '@fortawesome/free-solid-svg-icons';
 import {DialogSettingComponent} from "./dialog-setting/dialog-setting.component";
-import {Member} from "../model/member";
-import {List} from "../model/list";
+import {Task} from "../model/task";
 
 @Component({
   selector: 'my-app',
-  styles: ['form { display: flex;flex-direction: row; } .active {color: blue}'],
+  styleUrls: ['./app.component.css'],
   templateUrl: './app.component.html',
   providers: [TaskService, TrelloService]
 })
@@ -38,36 +37,44 @@ export class AppComponent implements OnInit {
     this.boards = this.trelloService.getBoards();
     this.boards.subscribe((b) => {
 
-      if (b[0]) {
+      let id = localStorage.getItem("boardId");
+      this.boardSelected = b.filter(b => b.id == id).pop();
+      if (!this.boardSelected && b[0]) {
         this.boardSelected = b[0];
       }
 
       this.updateGantt();
     });
 
-    gantt.config.xml_date = "%d-%m-%Y";
+    gantt.config.xml_date = "%Y-%m-%d";
     gantt.config.scale_unit = "week";
     // gantt.config.date_scale = "S%W (%M %Y)";
     gantt.config.date_scale = "%d %M";
     gantt.config.readonly = true;
     gantt.config.date_grid = "%d %M %Y";
 
-    gantt.attachEvent("onTaskClick", function(id,e){
+    gantt.attachEvent("onTaskClick", function(id){
       const t = this.getTask(id);
       window.open(t.url,"cardWindow");
       return true;
     });
 
-    gantt.templates.task_text=function(start,end,task){
+    gantt.templates.task_text=function(start,end,task: Task){
       const marker = task.marker ? "<i class=\"fas " + task.marker + "\"></i> " : "";
-      return task.users ?
-        marker+task.text+",<b> By:</b> "+task.users :
-        marker+task.text;
+      let stickers = "<mat-chip-list>";
+      task.stickers.forEach(s => stickers += `<img height="25" src="${s}"/>`);
+      stickers += "</mat-chip-list>";
+
+      console.log(stickers);
+
+      return marker+task.text+stickers;
     };
 
     gantt.templates.tooltip_text = function(start,end,task){
       const marker = task.marker ? "<i class=\"fas " + task.marker + "\"></i> " : "";
-      return "<b>" + marker + task.text + "</b><br/>" + task.descr;
+      let stickers = "";
+      task.stickers.forEach(s => stickers += `<img height="25" src="${s}"/>`);
+      return "<b>" + marker + task.text + stickers + "</b><br/>" + task.descr;
     };
 
     gantt.init(this.ganttContainer.nativeElement);
@@ -76,7 +83,7 @@ export class AppComponent implements OnInit {
   openFilterDialog(): void {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
-      const conf:BoardConfiguration = this.getConfiguration(anyBoard);
+      const conf:BoardConfiguration = AppComponent.getConfiguration(anyBoard);
       const dialogRef = this.dialog.open(DialogFilterComponent, {
         maxHeight: "50%",
         maxWidth: "75%",
@@ -85,7 +92,7 @@ export class AppComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        if (result) this.saveConfiguration(result);
+        if (result) AppComponent.saveConfiguration(result);
 
         this.updateGantt();
       });
@@ -95,7 +102,7 @@ export class AppComponent implements OnInit {
   openSettingDialog(): void {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
-      const conf:BoardConfiguration = this.getConfiguration(anyBoard);
+      const conf:BoardConfiguration = AppComponent.getConfiguration(anyBoard);
       const dialogRef = this.dialog.open(DialogSettingComponent, {
         minWidth: "50%",
         maxWidth: "75%",
@@ -104,7 +111,7 @@ export class AppComponent implements OnInit {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        if (result) this.saveConfiguration(result);
+        if (result) AppComponent.saveConfiguration(result);
 
         this.updateGantt();
       });
@@ -115,9 +122,10 @@ export class AppComponent implements OnInit {
     gantt.clearAll();
 
     if (this.boardSelected) {
+      localStorage.setItem("boardId", this.boardSelected.id);
       const board = this.trelloService.getBoard(this.boardSelected.id);
       board.subscribe((anyBoard) => {
-        const conf:BoardConfiguration = this.getConfiguration(anyBoard);
+        const conf:BoardConfiguration = AppComponent.getConfiguration(anyBoard);
         const cards:Observable<Card[]> = this.trelloService.getCards(anyBoard.id);
 
         cards.subscribe((cards) => {
@@ -138,14 +146,16 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private getConfiguration(boardSelected: Board) {
+  private static getConfiguration(boardSelected: Board) {
     let conf = new BoardConfiguration();
 
     if (boardSelected) {
       let json = localStorage.getItem(boardSelected.id);
 
       if (json) {
-        conf = JSON.parse(json);
+        const jsonObject = <BoardConfiguration>JSON.parse(json)
+        conf.filter = jsonObject.filter;
+        conf.setting = jsonObject.setting;
       }
     }
 
@@ -157,17 +167,17 @@ export class AppComponent implements OnInit {
     return o1 && o2 && o1.id === o2.id;
   }
 
-  private saveConfiguration(conf: BoardConfiguration) {
+  private static saveConfiguration(conf: BoardConfiguration) {
     localStorage.setItem(conf.board.id, JSON.stringify(conf));
   }
 
   public isSettingActive() {
-    const conf:BoardConfiguration = this.getConfiguration(this.boardSelected);
-    return conf.field_start_date || conf.field_end_date;
+    const conf:BoardConfiguration = AppComponent.getConfiguration(this.boardSelected);
+    return !conf.isEmptySetting();
   }
 
   public isFilterActive() {
-    const conf:BoardConfiguration = this.getConfiguration(this.boardSelected);
-    return conf.filter.members.length || conf.filter.lists.length || conf.filter.name;
+    const conf:BoardConfiguration = AppComponent.getConfiguration(this.boardSelected);
+    return !conf.isEmptyFilter();
   }
 }

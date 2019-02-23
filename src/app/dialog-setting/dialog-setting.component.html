@@ -1,7 +1,8 @@
 <h1 mat-dialog-title>Configuration</h1>
 <div mat-dialog-content>
+  <form class="setting-form">
    <mat-form-field>
-    <mat-select placeholder="Date de début" [(ngModel)]="conf.field_start_date" name="startDate">
+    <mat-select placeholder="Date de début" [(ngModel)]="conf.setting.fieldStartDate" name="startDate">
       <mat-option value="">Date d'échéance</mat-option>
       <mat-option *ngFor="let customDate of customDates" [value]="customDate.id">
         {{customDate.name}}
@@ -9,25 +10,33 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field>
-    <mat-select placeholder="Date de Fin" [(ngModel)]="conf.field_end_date" name="endDate">
+    <mat-select placeholder="Date de Fin" [(ngModel)]="conf.setting.fieldEndDate" name="endDate">
       <mat-option value="">Date d'échéance</mat-option>
       <mat-option *ngFor="let customDate of customDates" [value]="customDate.id">
         {{customDate.name}}
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field>
+    <input matInput type="number" placeholder="Durée par défaut (si l'un des champs n'est pas renseigné)" [(ngModel)]="conf.setting.duration" name="duration">
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput type="number" placeholder="Décalage des cartes sans date (0 = masqué)" [(ngModel)]="conf.setting.delay" name="delay">
+  </mat-form-field>
   <mat-divider></mat-divider>
   <mat-list>
     <h3 mat-subheader>Configuration des listes</h3>
     <mat-list-item *ngFor="let list of conf.board.lists">
       <h4 mat-line>
-          <i class="fas" [ngClass]="conf.markerLists[list.id]"></i>
+          <i class="fas" [ngClass]="conf.setting.markerLists[list.id]"></i>
           {{list.name}}
       </h4>
-      <input matInput placeholder="Expl : fa-skull-crossbones" [(ngModel)]="conf.markerLists[list.id]">
+      <input matInput placeholder="Expl : fa-skull-crossbones" [(ngModel)]="conf.setting.markerLists[list.id]"  name="marker">
     </mat-list-item>
   </mat-list>
+  </form>
 </div>
 <div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="conf" (click)="clean()">Effacer</button>
   <button mat-button [mat-dialog-close]="conf">Ok</button>
 </div>

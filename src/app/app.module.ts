@@ -11,7 +11,14 @@ import {
   MatFormFieldModule,
   MatOptionModule,
   MatDialogModule,
-  MatExpansionModule, MatButtonModule, MatIconModule, MatDividerModule, MatInputModule, MatListModule, MatGridListModule
+  MatExpansionModule,
+  MatButtonModule,
+  MatIconModule,
+  MatDividerModule,
+  MatInputModule,
+  MatListModule,
+  MatGridListModule,
+  MatChipsModule, MatToolbarModule
 } from "@angular/material";
 import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
@@ -35,6 +42,8 @@ import { DialogSettingComponent } from './dialog-setting/dialog-setting.componen
     MatInputModule,
     MatListModule,
     MatGridListModule,
+    MatToolbarModule,
+    MatChipsModule,
     MatDividerModule],
   declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent ],
   entryComponents: [DialogFilterComponent,DialogSettingComponent],

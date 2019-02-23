@@ -2,6 +2,8 @@ import {Injectable} from "@angular/core";
 import {Task} from "../model/task";
 import {Card} from "../model/card";
 import {BoardConfiguration} from "../model/boardConfiguration";
+import * as moment from 'moment';
+import {Moment} from "moment";
 
 @Injectable()
 export class TaskService {
@@ -17,54 +19,93 @@ export class TaskService {
    */
     get(cards: Card[], conf: BoardConfiguration): Promise<Task[]>{
       const myTasks: Task[] = [];
+
       cards.forEach((card) => {
-        let startDate: Date = new Date(card.due);
-        let startDateItem:any = null;
-        let endDateItem:any = null;
-        let endDate: Date = new Date(card.due);
+        let startDate: Moment;
+        let startDateItem:any;
+        let endDateItem:any;
+        let endDate: Moment;
 
         // On récupére la date de fin si elle existe
-        if (conf.field_start_date) {
+        if (conf.setting.fieldEndDate) {
           endDateItem = card.customFieldItems
             .filter((field) => {
-              return field.idCustomField === conf.field_end_date;
+              return field.idCustomField === conf.setting.fieldEndDate;
             })
             .pop();
         }
 
-        if (endDateItem) {
-          endDate = new Date(endDateItem.value.date);
+        if (endDateItem && endDateItem.value.date) {
+          endDate = moment(endDateItem.value.date);
         }
-        endDate.setHours(24);
 
         // On récupére la date de début si elle existe
-        if (conf.field_start_date) {
+        if (conf.setting.fieldStartDate) {
           startDateItem = card.customFieldItems
             .filter((field) => {
-              return field.idCustomField === conf.field_start_date;
+              return field.idCustomField === conf.setting.fieldStartDate;
             })
             .pop();
         }
 
-        if (startDateItem) {
-          startDate = new Date(startDateItem.value.date);
+        if (startDateItem && startDateItem.value.date) {
+          startDate = moment(startDateItem.value.date);
         }
 
-        // Création de la tâche
-        const t = new Task();
-        t.id = card.id;
-        t.text = card.name;
-        t.descr = card.desc;
-        t.start_date = startDate.toLocaleDateString("fr-FR"); // new Date(card.due).toLocaleDateString("fr-FR");
-        t.end_date = endDate.toLocaleDateString("fr-FR");
-        t.progress = 1;
-        if (card.labels && card.labels[0]) {
+
+        // Aucune des 2 dates renseignées
+        if (endDate == null && startDate == null) {
+          if (card.due) {
+            startDate = moment(card.due);
+            endDate = moment(startDate.toDate());
+            if (conf.setting.duration)
+              endDate.add(conf.setting.duration - 1, 'd');
+          } else if (conf.setting.delay) {
+            startDate = moment();
+            startDate.add(conf.setting.delay, 'd');
+            endDate = moment(startDate.toDate()).add(conf.setting.duration - 1);
+          }
+        } else {
+          // Si pas de date de fin ou pas de date début, on s'appuie sur la durée
+          if (endDate == null) {
+            if (card.due) {
+              endDate = moment(card.due);
+            } else {
+              endDate = moment(startDate.toDate()).add(conf.setting.duration - 1, 'd');
+            }
+          } else if (startDate == null) {
+            if (card.due) {
+              startDate = moment(card.due);
+            } else {
+              startDate = moment(endDate.toDate()).add(conf.setting.duration + 1, 'd');
+            }
+          }
+        }
+
+        if (endDate && startDate) {
+          // Initialisation des heures / minutes / secondes pour raisonner en jour plein
+          startDate.hour(1).minute(0).second(0);
+          endDate.hour(1).minute(0).second(0).add(1, 'd');
+
+          // Création de la tâche
+          const t = new Task();
+          t.id = card.id;
+          t.text = card.name;
+          t.descr = card.desc;
+          t.start_date = startDate.toISOString();
+          t.end_date = endDate.toISOString();
+          t.progress = 1;
+          if (card.labels && card.labels[0]) {
             t.color = card.labels[0].color;
-        }
-        t.marker = conf.markerLists[card.idList];
-        t.url = card.url;
+          }
+          if (card.stickers.length) {
+            t.stickers = card.stickers.map(s => s.imageUrl);
+          }
+          t.marker = conf.setting.markerLists[card.idList];
+          t.url = card.url;
 
-        myTasks.push(t);
+          myTasks.push(t);
+        }
       });
 
       return Promise.resolve(myTasks);

@@ -1,0 +1,14 @@
+form {
+    display: flex;
+    flex-direction: row;
+}
+
+.active {color: blue}
+
+.board-icon {
+    margin-left: 10px;
+}
+
+.menu-spacer {
+    flex: 1 1 auto;
+}

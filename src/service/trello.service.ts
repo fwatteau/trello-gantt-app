@@ -63,7 +63,7 @@ export class TrelloService {
     * @returns {Observable<any>}
     */
     getCards(boardId: string): Observable<Card[]> {
-        const pathCards = `https://api.trello.com/1/boards/${boardId}/cards?customFieldItems=true&key=${this.key}&token=${this.token}`;
+        const pathCards = `https://api.trello.com/1/boards/${boardId}/cards?customFieldItems=true&stickers=true&key=${this.key}&token=${this.token}`;
 
         return this.http.get<Card[]>(pathCards);
     }
