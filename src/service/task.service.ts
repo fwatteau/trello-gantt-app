@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
 import {Task} from "../model/task";
 import {Card} from "../model/card";
-import {BoardConfiguration} from "../model/boardConfiguration";
 import * as moment from 'moment';
 import {Moment} from "moment";
+import {BoardConfigurationService} from "./board.configuration.service";
 
 @Injectable()
 export class TaskService {
@@ -17,7 +17,7 @@ export class TaskService {
    * @param {Card[]} cards
    * @returns {Promise<Task[]>}
    */
-    get(cards: Card[], conf: BoardConfiguration): Promise<Task[]>{
+    get(cards: Card[], conf: BoardConfigurationService): Promise<Task[]>{
       const myTasks: Task[] = [];
 
       cards.forEach((card) => {

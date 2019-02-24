@@ -18,11 +18,12 @@ import {
   MatInputModule,
   MatListModule,
   MatGridListModule,
-  MatChipsModule, MatToolbarModule
+  MatChipsModule, MatToolbarModule, MatBadgeModule
 } from "@angular/material";
 import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import { DialogSettingComponent } from './dialog-setting/dialog-setting.component';
+import { DialogGanttComponent } from './dialog-gantt/dialog-gantt.component';
 
 @NgModule({
   imports:      [
@@ -39,14 +40,15 @@ import { DialogSettingComponent } from './dialog-setting/dialog-setting.componen
     MatExpansionModule,
     MatButtonModule,
     MatIconModule,
+    MatBadgeModule,
     MatInputModule,
     MatListModule,
     MatGridListModule,
     MatToolbarModule,
     MatChipsModule,
     MatDividerModule],
-  declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent ],
-  entryComponents: [DialogFilterComponent,DialogSettingComponent],
+  declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent, DialogGanttComponent ],
+  entryComponents: [DialogFilterComponent,DialogSettingComponent,DialogGanttComponent],
   bootstrap:    [ AppComponent ]
 })
 export class AppModule { }

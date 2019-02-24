@@ -1,7 +1,9 @@
 {
   "name": "gantt-trello-app",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
+  "author": "Franck WATTEAU",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "@angular/animations": "~7.2.5",
     "@angular/cdk": "~7.3.2",
@@ -42,7 +44,7 @@
     "@types/dhtmlxgantt": "^6.0.2",
     "@types/jasmine": "~3.3.9",
     "@types/jasminewd2": "~2.0.6",
-    "@types/node": "~11.9.4",
+    "@types/node": "^11.9.5",
     "codelyzer": "~4.5.0",
     "jasmine-core": "~3.3.0",
     "jasmine-spec-reporter": "~4.2.1",

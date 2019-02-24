@@ -1,8 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
-import {BoardConfiguration} from "../../model/boardConfiguration";
-import {Member} from "../../model/member";
-import {FilterConfiguration} from "../../model/filterConfiguration";
+import {FilterConfiguration} from "../../model/filter.configuration";
+import {BoardConfigurationService} from "../../service/board.configuration.service";
 
 @Component({
   selector: 'app-dialog-filter',
@@ -13,7 +12,7 @@ export class DialogFilterComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<DialogFilterComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: BoardConfiguration) {}
+    @Inject(MAT_DIALOG_DATA) public data: BoardConfigurationService) {}
 
   clean(): void {
     this.data.filter = new FilterConfiguration();

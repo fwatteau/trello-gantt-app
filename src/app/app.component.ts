@@ -9,10 +9,12 @@ import {Board} from "../model/board";
 import {Card} from "../model/card";
 import {DialogFilterComponent} from "./dialog-filter/dialog-filter.component";
 import {MatDialog} from "@angular/material";
-import {BoardConfiguration} from "../model/boardConfiguration";
-import {faCog, faFilter} from '@fortawesome/free-solid-svg-icons';
+import {BoardConfigurationService} from "../service/board.configuration.service";
 import {DialogSettingComponent} from "./dialog-setting/dialog-setting.component";
 import {Task} from "../model/task";
+import {environment} from "../environments/environment";
+import {DialogGanttComponent} from "./dialog-gantt/dialog-gantt.component";
+import {GanttConfiguration} from "../model/gantt.configuration";
 
 @Component({
   selector: 'my-app',
@@ -24,8 +26,7 @@ export class AppComponent implements OnInit {
   @ViewChild("gantt_here") ganttContainer: ElementRef;
   boards: Observable<Board[]>;
   boardSelected: Board;
-  filterIcon = faFilter;
-  settingIcon = faCog;
+  version:string = environment.VERSION;
 
   constructor(private taskService: TaskService, private trelloService: TrelloService, private dialog: MatDialog) {
 
@@ -46,12 +47,18 @@ export class AppComponent implements OnInit {
       this.updateGantt();
     });
 
-    gantt.config.xml_date = "%Y-%m-%d";
-    gantt.config.scale_unit = "week";
+    this.initGantt();
+  }
+
+  initGantt(): void {
+    let ganttConf = AppComponent.getGanttConfiguration();
+
+    if (ganttConf.xml_date) gantt.config.xml_date = ganttConf.xml_date;
+    if (ganttConf.scale_unit) gantt.config.scale_unit = ganttConf.scale_unit;
     // gantt.config.date_scale = "S%W (%M %Y)";
-    gantt.config.date_scale = "%d %M";
-    gantt.config.readonly = true;
-    gantt.config.date_grid = "%d %M %Y";
+    if (ganttConf.date_scale) gantt.config.date_scale = ganttConf.date_scale;
+    if (ganttConf.readonly) gantt.config.readonly = ganttConf.readonly;
+    if (ganttConf.date_grid) gantt.config.date_grid = ganttConf.date_grid;
 
     gantt.attachEvent("onTaskClick", function(id){
       const t = this.getTask(id);
@@ -83,7 +90,7 @@ export class AppComponent implements OnInit {
   openFilterDialog(): void {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
-      const conf:BoardConfiguration = AppComponent.getConfiguration(anyBoard);
+      const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
       const dialogRef = this.dialog.open(DialogFilterComponent, {
         maxHeight: "50%",
         maxWidth: "75%",
@@ -99,10 +106,26 @@ export class AppComponent implements OnInit {
     });
   }
 
+  openGanttDialog(): void {
+    let ganttConf = AppComponent.getGanttConfiguration();
+
+    const dialogRef = this.dialog.open(DialogGanttComponent, {
+      maxHeight: "50%",
+      maxWidth: "75%",
+      minWidth: "50%",
+      data: ganttConf
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      localStorage.setItem("ganttConf", JSON.stringify(result));
+      this.initGantt();
+    });
+  }
+
   openSettingDialog(): void {
     const board = this.trelloService.getBoard(this.boardSelected.id);
     board.subscribe((anyBoard) => {
-      const conf:BoardConfiguration = AppComponent.getConfiguration(anyBoard);
+      const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
       const dialogRef = this.dialog.open(DialogSettingComponent, {
         minWidth: "50%",
         maxWidth: "75%",
@@ -125,7 +148,7 @@ export class AppComponent implements OnInit {
       localStorage.setItem("boardId", this.boardSelected.id);
       const board = this.trelloService.getBoard(this.boardSelected.id);
       board.subscribe((anyBoard) => {
-        const conf:BoardConfiguration = AppComponent.getConfiguration(anyBoard);
+        const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
         const cards:Observable<Card[]> = this.trelloService.getCards(anyBoard.id);
 
         cards.subscribe((cards) => {
@@ -147,13 +170,13 @@ export class AppComponent implements OnInit {
   }
 
   private static getConfiguration(boardSelected: Board) {
-    let conf = new BoardConfiguration();
+    let conf = new BoardConfigurationService();
 
     if (boardSelected) {
       let json = localStorage.getItem(boardSelected.id);
 
       if (json) {
-        const jsonObject = <BoardConfiguration>JSON.parse(json)
+        const jsonObject = <BoardConfigurationService>JSON.parse(json)
         conf.filter = jsonObject.filter;
         conf.setting = jsonObject.setting;
       }
@@ -167,17 +190,26 @@ export class AppComponent implements OnInit {
     return o1 && o2 && o1.id === o2.id;
   }
 
-  private static saveConfiguration(conf: BoardConfiguration) {
+  private static saveConfiguration(conf: BoardConfigurationService) {
     localStorage.setItem(conf.board.id, JSON.stringify(conf));
   }
 
   public isSettingActive() {
-    const conf:BoardConfiguration = AppComponent.getConfiguration(this.boardSelected);
+    const conf:BoardConfigurationService = AppComponent.getConfiguration(this.boardSelected);
     return !conf.isEmptySetting();
   }
 
   public isFilterActive() {
-    const conf:BoardConfiguration = AppComponent.getConfiguration(this.boardSelected);
+    const conf:BoardConfigurationService = AppComponent.getConfiguration(this.boardSelected);
     return !conf.isEmptyFilter();
+  }
+
+  private static getGanttConfiguration(): GanttConfiguration {
+    let conf = new GanttConfiguration();
+    let json = localStorage.getItem("ganttConf");
+    if (json) {
+      conf = JSON.parse(json);
+    }
+    return conf;
   }
 }

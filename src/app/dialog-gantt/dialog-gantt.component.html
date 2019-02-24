@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Filtre</h1>
+<div mat-dialog-content>
+  <form class="gantt-form">
+    <mat-form-field>
+      <mat-select placeholder="Echelle" [(ngModel)]="conf.scale_unit" name="member">
+        <mat-option value="day">Jour</mat-option>
+        <mat-option value="week">Semaine</mat-option>
+        <mat-option value="month">Mois</mat-option>
+        <mat-option value="month">Année</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Format de la date (tableau)" [(ngModel)]="conf.date_grid" name="grid">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput placeholder="Format de la date (entêtes)" [(ngModel)]="conf.date_scale" name="scale">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="conf" (click)="clean()">Réinitialisation</button>
+  <button mat-button [mat-dialog-close]="conf" cdkFocusInitial>Ok</button>
+</div>

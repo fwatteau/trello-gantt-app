@@ -1,6 +1,22 @@
+mat-toolbar h1 {
+    font-family: 'Faster One', cursive;
+}
+
 form {
     display: flex;
     flex-direction: row;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.footer {
+    text-align: right;
+    background-color: #f5f5f5;
+    padding: 1rem .5rem 1rem;
 }
 
 .active {color: blue}

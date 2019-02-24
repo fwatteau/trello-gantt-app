@@ -1,18 +1,27 @@
-<!--h2 class="mat-title">Affichage des cartes Trello sous la forme d'un Gantt</h2-->
-<mat-toolbar>
-  <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
-    <mat-option *ngFor="let board of boards | async" [value]="board">
-      {{board.name}}
-    </mat-option>
-  </mat-select>
-  <span class="menu-spacer"></span>
-  <div *ngIf="boardSelected != null">
-    <button mat-mini-fab class="board-icon" (click)="openFilterDialog()" [color]="isFilterActive() ? 'primary' : 'warn'">
-      <mat-icon>filter_list</mat-icon>
+<!-- header -->
+<div class="container">
+  <mat-toolbar color="primary">
+    <h1 [title]="version">Another Gantt App</h1>
+    <span class="menu-spacer"></span>
+    <button mat-mini-fab class="board-icon" (click)="openGanttDialog()" color="accent">
+      <mat-icon>build</mat-icon>
     </button>
-    <button mat-mini-fab class="board-icon" (click)="openSettingDialog()" [color]="isSettingActive() ? 'primary' : 'warn'">
-      <mat-icon>settings</mat-icon>
-    </button>
-  </div>
-</mat-toolbar>
-<div #gantt_here style='width: 100%; height: 90%;'></div>
+  </mat-toolbar>
+  <mat-toolbar>
+    <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
+      <mat-option *ngFor="let board of boards | async" [value]="board">
+        {{board.name}}
+      </mat-option>
+    </mat-select>
+    <span class="menu-spacer"></span>
+    <div *ngIf="boardSelected != null">
+      <button mat-mini-fab class="board-icon" (click)="openFilterDialog()" [color]="isFilterActive() ? 'primary' : 'warn'">
+        <mat-icon>filter_list</mat-icon>
+      </button>
+      <button mat-mini-fab class="board-icon" (click)="openSettingDialog()" [color]="isSettingActive() ? 'primary' : 'warn'">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
+  <div #gantt_here style='width: 100%; height: 100%;'></div>
+</div>

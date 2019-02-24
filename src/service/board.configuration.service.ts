@@ -1,8 +1,8 @@
-import {Board} from "./board";
-import {FilterConfiguration} from "./filterConfiguration";
-import {SettingConfiguration} from "./settingConfiguration";
+import {Board} from "../model/board";
+import {FilterConfiguration} from "../model/filter.configuration";
+import {SettingConfiguration} from "../model/setting.configuration";
 
-export class BoardConfiguration {
+export class BoardConfigurationService {
   board: Board;
   filter: FilterConfiguration = new FilterConfiguration();
   setting: SettingConfiguration = new SettingConfiguration();

@@ -1,8 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {BoardConfiguration} from "../../model/boardConfiguration";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
-import {SettingConfiguration} from "../../model/settingConfiguration";
-import { library } from '@fortawesome/fontawesome-svg-core';
+import {SettingConfiguration} from "../../model/setting.configuration";
+import {BoardConfigurationService} from "../../service/board.configuration.service";
 
 @Component({
   selector: 'app-dialog-setting',
@@ -14,7 +13,7 @@ export class DialogSettingComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<DialogSettingComponent>,
-    @Inject(MAT_DIALOG_DATA) public conf: BoardConfiguration) {
+    @Inject(MAT_DIALOG_DATA) public conf: BoardConfigurationService) {
 
   }
 
