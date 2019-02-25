@@ -3,8 +3,11 @@
   <mat-toolbar color="primary">
     <h1 [title]="version">Another Gantt App</h1>
     <span class="menu-spacer"></span>
-    <button mat-mini-fab class="board-icon" (click)="openGanttDialog()" color="accent">
+    <button mat-mini-fab class="board-icon" (click)="openGanttDialog()" color="accent" title="Configuration du Gantt">
       <mat-icon>build</mat-icon>
+    </button>
+    <button mat-mini-fab class="board-icon" (click)="clean()" color="accent" title="Supprimer les données">
+      <mat-icon>exit_to_app</mat-icon>
     </button>
   </mat-toolbar>
   <mat-toolbar>
@@ -15,10 +18,10 @@
     </mat-select>
     <span class="menu-spacer"></span>
     <div *ngIf="boardSelected != null">
-      <button mat-mini-fab class="board-icon" (click)="openFilterDialog()" [color]="isFilterActive() ? 'primary' : 'warn'">
+      <button mat-mini-fab class="board-icon" (click)="openFilterDialog()" [color]="isFilterActive() ? 'primary' : 'warn'" title="Filtre du tableau">
         <mat-icon>filter_list</mat-icon>
       </button>
-      <button mat-mini-fab class="board-icon" (click)="openSettingDialog()" [color]="isSettingActive() ? 'primary' : 'warn'">
+      <button mat-mini-fab class="board-icon" (click)="openSettingDialog()" [color]="isSettingActive() ? 'primary' : 'warn'" title="Configuration du Gantt pour ce tableau">
         <mat-icon>settings</mat-icon>
       </button>
     </div>

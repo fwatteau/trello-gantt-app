@@ -72,9 +72,9 @@ export class AppComponent implements OnInit {
       task.stickers.forEach(s => stickers += `<img height="25" src="${s}"/>`);
       stickers += "</mat-chip-list>";
 
-      console.log(stickers);
+      // console.log(stickers);
 
-      return marker+task.text+stickers;
+      return stickers + marker + task.text;
     };
 
     gantt.templates.tooltip_text = function(start,end,task){
@@ -150,13 +150,14 @@ export class AppComponent implements OnInit {
       board.subscribe((anyBoard) => {
         const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
         const cards:Observable<Card[]> = this.trelloService.getCards(anyBoard.id);
+        const regex = new RegExp(conf.filter.name ? conf.filter.name : '.*', "i")
 
         cards.subscribe((cards) => {
           // Filtre sur les membres, les listes ou le nom de la carte
           const filteredCards = cards.filter((anyCard: Card) => {
             return (!conf.filter.members.length || anyCard.idMembers.filter((value: string) => conf.filter.members.includes(value)).length)
-              && (!conf.filter.lists.length || conf.filter.lists.includes(anyCard.idList))
-              && (!conf.filter.name || !anyCard.name.search(new RegExp(conf.filter.name, "i")));
+              && (!conf.filter.lists.length || !conf.filter.lists.includes(anyCard.idList))
+              && (regex.test(anyCard.name));
           });
 
           // Ajout dans le Gantt
@@ -211,5 +212,10 @@ export class AppComponent implements OnInit {
       conf = JSON.parse(json);
     }
     return conf;
+  }
+
+  public clean() {
+    localStorage.clear();
+    location.reload();
   }
 }

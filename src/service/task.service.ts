@@ -52,18 +52,17 @@ export class TaskService {
           startDate = moment(startDateItem.value.date);
         }
 
-
         // Aucune des 2 dates renseignées
         if (endDate == null && startDate == null) {
+
           if (card.due) {
             startDate = moment(card.due);
-            endDate = moment(startDate.toDate());
+            endDate = startDate.clone();
             if (conf.setting.duration)
-              endDate.add(conf.setting.duration - 1, 'd');
+              endDate = endDate.add(conf.setting.duration - 1, 'd');
           } else if (conf.setting.delay) {
-            startDate = moment();
-            startDate.add(conf.setting.delay, 'd');
-            endDate = moment(startDate.toDate()).add(conf.setting.duration - 1);
+            startDate = moment().add(conf.setting.delay, 'd');
+            endDate = moment().add(conf.setting.delay + conf.setting.duration - 1, 'd');
           }
         } else {
           // Si pas de date de fin ou pas de date début, on s'appuie sur la durée

@@ -40,7 +40,7 @@ export class TrelloService {
      * @returns {Observable<any>}
      */
     getBoards(): Observable<Board[]> {
-        const path = `https://api.trello.com/1//member/me/boards?members=all&key=${this.key}&token=${this.token}`;
+        const path = `https://api.trello.com/1/member/me/boards?members=all&key=${this.key}&token=${this.token}`;
         return this.http.get<Board[]>(path);
     }
 

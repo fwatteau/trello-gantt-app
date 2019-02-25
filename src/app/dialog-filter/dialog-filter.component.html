@@ -10,7 +10,7 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
-      <mat-select placeholder="Listes visibles" multiple="multiple" [(ngModel)]="data.filter.lists" name="lists">
+      <mat-select placeholder="Listes masquées" multiple="multiple" [(ngModel)]="data.filter.lists" name="lists">
         <mat-option *ngFor="let list of data.board.lists" [value]="list.id">
           {{list.name}}
         </mat-option>
