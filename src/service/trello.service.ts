@@ -3,11 +3,12 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs/index";
 import {Board} from "../model/board";
 import {Card} from "../model/card";
+import {environment} from "../environments/environment";
 
 @Injectable()
 export class TrelloService {
     private token: string;
-    private key = '08c1c082c7cb12602cdccdbc55428bad';
+    private key = environment.API_KEY;
 
     constructor(public http: HttpClient) {
 

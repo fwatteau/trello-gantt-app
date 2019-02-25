@@ -13,6 +13,7 @@
   <mat-toolbar>
     <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau"
                 [matBadge]="filteredNumber" [matBadgeHidden]="!filteredNumber" matBadgeColor="warn"
+                [title]="filteredNumber+' élément(s) masqué(s)'"
                 [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
       <mat-option *ngFor="let board of boards | async" [value]="board">
         {{board.name}}
