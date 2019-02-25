@@ -4,6 +4,8 @@ import {Card} from "../model/card";
 import * as moment from 'moment';
 import {Moment} from "moment";
 import {BoardConfigurationService} from "./board.configuration.service";
+import {List} from "../model/list";
+import {GanttConfiguration} from "../model/gantt.configuration";
 
 @Injectable()
 export class TaskService {
@@ -17,8 +19,9 @@ export class TaskService {
    * @param {Card[]} cards
    * @returns {Promise<Task[]>}
    */
-    get(cards: Card[], conf: BoardConfigurationService): Promise<Task[]>{
+    get(cards: Card[], conf: BoardConfigurationService, gantConf: GanttConfiguration): Promise<Task[]>{
       const myTasks: Task[] = [];
+      let listToDisplay: string[] = [];
 
       cards.forEach((card) => {
         let startDate: Moment;
@@ -86,6 +89,8 @@ export class TaskService {
           startDate.hour(1).minute(0).second(0);
           endDate.hour(1).minute(0).second(0).add(1, 'd');
 
+          const list: List = conf.board.lists.filter(list => list.id === card.idList).pop();
+
           // Création de la tâche
           const t = new Task();
           t.id = card.id;
@@ -94,6 +99,8 @@ export class TaskService {
           t.start_date = startDate.toISOString();
           t.end_date = endDate.toISOString();
           t.progress = 1;
+          if (list)
+            t.listName = list.name;
           if (card.labels && card.labels[0]) {
             t.color = card.labels[0].color;
           }
@@ -102,9 +109,28 @@ export class TaskService {
           }
           t.marker = conf.setting.markerLists[card.idList];
           t.url = card.url;
+          if (gantConf.group_list) {
+            t.parent = card.idList;
+            listToDisplay.push(card.idList);
+          }
 
           myTasks.push(t);
         }
+      });
+
+      // On groupe par liste
+      listToDisplay.forEach(idList => {
+        const list = conf.board.lists.filter(l => l.id === idList).pop();
+        const t = new Task();
+        t.id = list.id;
+        t.text = list.name;
+        /*t.start_date = startDate.toISOString();
+        t.end_date = endDate.toISOString();*/
+        t.progress = 0;
+        t.marker = conf.setting.markerLists[list.id];
+        t.type = "parent";
+
+        myTasks.push(t);
       });
 
       return Promise.resolve(myTasks);

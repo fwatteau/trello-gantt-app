@@ -14,7 +14,7 @@ export class DialogGanttComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public conf: GanttConfiguration) { }
 
   ngOnInit() {
-    console.log(this.conf)
+
   }
 
   clean() {

@@ -1,3 +1,4 @@
+import {List} from "./list";
 
 export class Card {
   id: string;

@@ -11,7 +11,9 @@
     </button>
   </mat-toolbar>
   <mat-toolbar>
-    <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
+    <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau"
+                [matBadge]="filteredNumber" [matBadgeHidden]="!filteredNumber" matBadgeColor="warn"
+                [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
       <mat-option *ngFor="let board of boards | async" [value]="board">
         {{board.name}}
       </mat-option>
@@ -27,4 +29,5 @@
     </div>
   </mat-toolbar>
   <div #gantt_here style='width: 100%; height: 100%;'></div>
+  <footer #message></footer>
 </div>

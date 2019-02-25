@@ -18,7 +18,7 @@ import {
   MatInputModule,
   MatListModule,
   MatGridListModule,
-  MatChipsModule, MatToolbarModule, MatBadgeModule
+  MatChipsModule, MatToolbarModule, MatBadgeModule, MatSlideToggleModule, MatSnackBarModule
 } from "@angular/material";
 import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
@@ -44,6 +44,8 @@ import { DialogGanttComponent } from './dialog-gantt/dialog-gantt.component';
     MatInputModule,
     MatListModule,
     MatGridListModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
     MatToolbarModule,
     MatChipsModule,
     MatDividerModule],

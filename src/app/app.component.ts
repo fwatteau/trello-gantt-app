@@ -3,12 +3,13 @@ import {Component, ElementRef, OnInit, ViewChild} from "@angular/core";
 import { Observable } from 'rxjs';
 import "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/ext/dhtmlxgantt_tooltip"
+import "dhtmlx-gantt/codebase/ext/dhtmlxgantt_marker"
 import {TaskService} from "../service/task.service";
 import {TrelloService} from "../service/trello.service";
 import {Board} from "../model/board";
 import {Card} from "../model/card";
 import {DialogFilterComponent} from "./dialog-filter/dialog-filter.component";
-import {MatDialog} from "@angular/material";
+import {MatDialog, MatSnackBar, MatSnackBarConfig} from "@angular/material";
 import {BoardConfigurationService} from "../service/board.configuration.service";
 import {DialogSettingComponent} from "./dialog-setting/dialog-setting.component";
 import {Task} from "../model/task";
@@ -24,17 +25,22 @@ import {GanttConfiguration} from "../model/gantt.configuration";
 })
 export class AppComponent implements OnInit {
   @ViewChild("gantt_here") ganttContainer: ElementRef;
+  @ViewChild("message") messageContainer: ElementRef;
   boards: Observable<Board[]>;
   boardSelected: Board;
+  filteredNumber: number = 0;
   version:string = environment.VERSION;
 
-  constructor(private taskService: TaskService, private trelloService: TrelloService, private dialog: MatDialog) {
+  constructor(private taskService: TaskService, private trelloService: TrelloService, private dialog: MatDialog, private snackBar: MatSnackBar) {
 
   }
 
   ngOnInit(): void {
     this.trelloService.authorize();
+    // Initialisation du Gantt
+    this.initGantt();
 
+    // Recherche des cartes
     this.boards = this.trelloService.getBoards();
     this.boards.subscribe((b) => {
 
@@ -46,8 +52,6 @@ export class AppComponent implements OnInit {
 
       this.updateGantt();
     });
-
-    this.initGantt();
   }
 
   initGantt(): void {
@@ -62,30 +66,41 @@ export class AppComponent implements OnInit {
 
     gantt.attachEvent("onTaskClick", function(id){
       const t = this.getTask(id);
-      window.open(t.url,"cardWindow");
+      if (t.url)
+        window.open(t.url,"cardWindow");
       return true;
     });
 
     gantt.templates.task_text=function(start,end,task: Task){
       const marker = task.marker ? "<i class=\"fas " + task.marker + "\"></i> " : "";
-      let stickers = "<mat-chip-list>";
+      let stickers = "";
       task.stickers.forEach(s => stickers += `<img height="25" src="${s}"/>`);
-      stickers += "</mat-chip-list>";
-
-      // console.log(stickers);
 
       return stickers + marker + task.text;
+    };
+
+    gantt.templates.rightside_text = function(start, end, task: Task){
+      return task.listName;
     };
 
     gantt.templates.tooltip_text = function(start,end,task){
       const marker = task.marker ? "<i class=\"fas " + task.marker + "\"></i> " : "";
       let stickers = "";
       task.stickers.forEach(s => stickers += `<img height="25" src="${s}"/>`);
-      return "<b>" + marker + task.text + stickers + "</b><br/>" + task.descr;
+
+      return "<b>" + stickers + marker + task.text + "</b><br/>" + task.descr;
     };
+
+    gantt.config.sort = true;
+
+    gantt.config.columns = [
+      {name:"text",       label:"Action",  width:"*", tree:true },
+      {name:"start_date", label:"Date de début", align:"center" },
+    ];
 
     gantt.init(this.ganttContainer.nativeElement);
   }
+
 
   openFilterDialog(): void {
     const board = this.trelloService.getBoard(this.boardSelected.id);
@@ -149,8 +164,13 @@ export class AppComponent implements OnInit {
       const board = this.trelloService.getBoard(this.boardSelected.id);
       board.subscribe((anyBoard) => {
         const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
+        const gantConf: GanttConfiguration = AppComponent.getGanttConfiguration();
         const cards:Observable<Card[]> = this.trelloService.getCards(anyBoard.id);
-        const regex = new RegExp(conf.filter.name ? conf.filter.name : '.*', "i")
+        const regex = new RegExp(conf.filter.name ? conf.filter.name : '.*', "i");
+        const snackConf = new MatSnackBarConfig();
+        snackConf.verticalPosition = "bottom";
+        snackConf.horizontalPosition = "center";
+        snackConf.panelClass = "snack-container";
 
         cards.subscribe((cards) => {
           // Filtre sur les membres, les listes ou le nom de la carte
@@ -161,8 +181,13 @@ export class AppComponent implements OnInit {
           });
 
           // Ajout dans le Gantt
-          this.taskService.get(filteredCards, conf)
+          this.taskService.get(filteredCards, conf, gantConf)
             .then((data) => {
+                const size = data.filter(c => c.type === "task").length;
+                this.filteredNumber = cards.length - size;
+                /*if (cards.length !== size) {
+                   this.snackBar.open((cards.length - size) + " élément(s) masqué(s) !", "Fermer", snackConf);
+                }*/
                 gantt.parse({data});
           });
         });
@@ -215,7 +240,9 @@ export class AppComponent implements OnInit {
   }
 
   public clean() {
-    localStorage.clear();
-    location.reload();
+    if (window.confirm("Confirmes tu la suppresion de toutes les données enregistrements (préférences, connexion Trello) ?")) {
+      localStorage.clear();
+      location.reload();
+    }
   }
 }
