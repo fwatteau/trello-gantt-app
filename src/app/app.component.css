@@ -28,3 +28,11 @@ form {
 .menu-spacer {
     flex: 1 1 auto;
 }
+
+.today {
+    background-color: darkred;
+}
+
+::ng-deep .snack-container {
+    height: 15px;
+}
