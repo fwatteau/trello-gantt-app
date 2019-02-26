@@ -185,9 +185,9 @@ export class AppComponent implements OnInit {
             .then((data) => {
                 const size = data.filter(c => c.type === "task").length;
                 this.filteredNumber = cards.length - size;
-                /*if (cards.length !== size) {
+                if (cards.length !== size) {
                    this.snackBar.open((cards.length - size) + " élément(s) masqué(s) !", "Fermer", snackConf);
-                }*/
+                }
                 gantt.parse({data});
           });
         });
