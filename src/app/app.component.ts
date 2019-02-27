@@ -37,6 +37,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(environment.API_KEY, environment.production);
     this.trelloService.authorize();
     // Initialisation du Gantt
     this.initGantt();
