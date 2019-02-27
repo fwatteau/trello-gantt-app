@@ -32,7 +32,3 @@ form {
 .today {
     background-color: darkred;
 }
-
-::ng-deep .snack-container {
-    height: 15px;
-}

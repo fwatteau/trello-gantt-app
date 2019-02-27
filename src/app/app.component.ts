@@ -9,13 +9,14 @@ import {TrelloService} from "../service/trello.service";
 import {Board} from "../model/board";
 import {Card} from "../model/card";
 import {DialogFilterComponent} from "./dialog-filter/dialog-filter.component";
-import {MatDialog, MatSnackBar, MatSnackBarConfig} from "@angular/material";
+
 import {BoardConfigurationService} from "../service/board.configuration.service";
 import {DialogSettingComponent} from "./dialog-setting/dialog-setting.component";
 import {Task} from "../model/task";
 import {environment} from "../environments/environment";
 import {DialogGanttComponent} from "./dialog-gantt/dialog-gantt.component";
 import {GanttConfiguration} from "../model/gantt.configuration";
+import {MatDialog, MatSnackBar, MatSnackBarConfig} from "@angular/material";
 
 @Component({
   selector: 'my-app',
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(`$process.env.API_KEY`);
     this.trelloService.authorize();
     // Initialisation du Gantt
     this.initGantt();
@@ -202,7 +204,7 @@ export class AppComponent implements OnInit {
       let json = localStorage.getItem(boardSelected.id);
 
       if (json) {
-        const jsonObject = <BoardConfigurationService>JSON.parse(json)
+        const jsonObject = <BoardConfigurationService>JSON.parse(json);
         conf.filter = jsonObject.filter;
         conf.setting = jsonObject.setting;
       }
