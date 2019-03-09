@@ -4,4 +4,6 @@ export class SettingConfiguration {
   markerLists: any = {};
   duration: number = 1;
   delay: number = 0;
+  sort_field: string;
+  sort_direction: boolean;
 }

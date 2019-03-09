@@ -17,6 +17,7 @@ import {environment} from "../environments/environment";
 import {DialogGanttComponent} from "./dialog-gantt/dialog-gantt.component";
 import {GanttConfiguration} from "../model/gantt.configuration";
 import {MatDialog, MatSnackBar, MatSnackBarConfig} from "@angular/material";
+import * as moment from 'moment';
 
 @Component({
   selector: 'my-app',
@@ -92,6 +93,14 @@ export class AppComponent implements OnInit {
       return "<b>" + stickers + marker + task.text + "</b><br/>" + task.descr;
     };
 
+    gantt.attachEvent("onAfterSort",function(field, direction, parent){
+      // your code here
+      let conf:BoardConfigurationService = AppComponent.getConfiguration(this.boardSelected);
+      conf.setting.sort_field = field;
+      conf.setting.sort_direction = direction;
+      AppComponent.saveConfiguration(conf);
+    }.bind(this));
+
     gantt.config.sort = true;
 
     gantt.config.columns = [
@@ -160,6 +169,14 @@ export class AppComponent implements OnInit {
   updateGantt() {
     gantt.clearAll();
 
+    // On ajoute le marker "Aujourd'hui"
+    gantt.addMarker({
+      start_date: new Date(), //a Date object that sets the marker's date
+      css: "today", //a CSS class applied to the marker
+      text: "Aujourd'hui", //the marker title
+      title:moment().toISOString() // the marker's tooltip
+    });
+
     if (this.boardSelected) {
       localStorage.setItem("boardId", this.boardSelected.id);
       const board = this.trelloService.getBoard(this.boardSelected.id);
@@ -184,15 +201,20 @@ export class AppComponent implements OnInit {
           // Ajout dans le Gantt
           this.taskService.get(filteredCards, conf, gantConf)
             .then((data) => {
-                const size = data.filter(c => c.type === "task").length;
-                this.filteredNumber = cards.length - size;
-                if (cards.length !== size) {
-                   this.snackBar.open((cards.length - size) + " élément(s) masqué(s) !", "Fermer", snackConf);
-                }
-                gantt.parse({data});
+              const size = data.filter(c => c.type === "task").length;
+              this.filteredNumber = cards.length - size;
+              if (cards.length !== size) {
+                 this.snackBar.open((cards.length - size) + " élément(s) masqué(s) !", "Fermer", snackConf);
+              }
+              gantt.parse({data});
+
+              // On remet le tri mémorisé
+              if (conf.setting.sort_field) {
+                gantt.sort(conf.setting.sort_field, conf.setting.sort_direction);
+              }
           });
         });
-      })
+      });
     }
   }
 
@@ -241,9 +263,9 @@ export class AppComponent implements OnInit {
   }
 
   public clean() {
-    if (window.confirm("Confirmes tu la suppresion de toutes les données enregistrements (préférences, connexion Trello) ?")) {
+    if (window.confirm("Confirmes tu la suppression de toutes les données enregistrements (préférences, connexion Trello) ?")) {
       localStorage.clear();
-      location.reload();
+      window.location.reload();
     }
   }
 }

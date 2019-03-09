@@ -124,6 +124,7 @@ export class TaskService {
         const t = new Task();
         t.id = list.id;
         t.text = list.name;
+        t.descr = "";
         /*t.start_date = startDate.toISOString();
         t.end_date = endDate.toISOString();*/
         t.progress = 0;
