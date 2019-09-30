@@ -16,7 +16,8 @@ import {Task} from "../model/task";
 import {environment} from "../environments/environment";
 import {DialogGanttComponent} from "./dialog-gantt/dialog-gantt.component";
 import {GanttConfiguration} from "../model/gantt.configuration";
-import {MatDialog, MatSnackBar, MatSnackBarConfig} from "@angular/material";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import * as moment from 'moment';
 
 @Component({

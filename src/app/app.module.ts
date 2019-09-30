@@ -6,20 +6,22 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {
-  MatSelectModule,
-  MatFormFieldModule,
-  MatOptionModule,
-  MatDialogModule,
-  MatExpansionModule,
-  MatButtonModule,
-  MatIconModule,
-  MatDividerModule,
-  MatInputModule,
-  MatListModule,
-  MatGridListModule,
-  MatChipsModule, MatToolbarModule, MatBadgeModule, MatSlideToggleModule, MatSnackBarModule
-} from "@angular/material";
+import { MatBadgeModule } from "@angular/material/badge";
+import { MatButtonModule } from "@angular/material/button";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatOptionModule } from "@angular/material/core";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatGridListModule } from "@angular/material/grid-list";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
+import { MatListModule } from "@angular/material/list";
+import { MatSelectModule } from "@angular/material/select";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatToolbarModule } from "@angular/material/toolbar";
 import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import { DialogSettingComponent } from './dialog-setting/dialog-setting.component';
