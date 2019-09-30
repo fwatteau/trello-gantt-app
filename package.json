@@ -20,7 +20,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "angular-in-memory-web-api": "^0.8.0",
     "core-js": "^2.6.9",
-    "dhtmlx-gantt": "^6.2.2",
+    "dhtmlx-gantt": "^6.2.6",
     "moment": "^2.24.0",
     "rxjs": "~6.5.3",
     "tslib": "^1.10.0",
