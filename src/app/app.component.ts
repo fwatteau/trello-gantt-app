@@ -105,9 +105,59 @@ export class AppComponent implements OnInit {
     gantt.config.sort = true;
 
     gantt.config.columns = [
+      {
+        name: "overdue", label: "", width: 38, template: function (obj) {
+          if (obj.deadline) {
+            var deadline = gantt.date.parseDate(obj.deadline, "xml_date");
+            if (deadline && obj.end_date > deadline) {
+              return '<div class="overdue-indicator">!</div>';
+            }
+          }
+          return '<div></div>';
+        }
+      },
       {name:"text",       label:"Action",  width:"*", tree:true },
       // {name:"start_date", label:"Date de début", align:"center" },
     ];
+    gantt.locale.labels.section_deadline = "Deadline";
+
+
+/*    gantt.addTaskLayer(function draw_deadline(task) {
+      if (task.deadline) {
+        var el = document.createElement('div');
+        el.className = 'deadline';
+        var sizes = gantt.getTaskPosition(task, task.deadline);
+  
+        el.style.left = sizes.left + 'px';
+        el.style.top = sizes.top + 'px';
+  
+        el.setAttribute('title', gantt.templates.task_date(task.deadline));
+        return el;
+      }
+      return false;
+    });*/
+  
+    gantt.templates.task_class = function (start, end, task) {
+      if (task.deadline && end.valueOf() > task.deadline.valueOf()) {
+        return 'overdue';
+      }
+    };
+  
+    gantt.templates.rightside_text = function (start, end, task) {
+      if (task.deadline) {
+        if (end.valueOf() > task.deadline.valueOf()) {
+          var overdue = Math.ceil(Math.abs((end.getTime() - task.deadline.getTime()) / (24 * 60 * 60 * 1000)));
+          var text = "<b>Overdue: " + overdue + " days</b>";
+          return text;
+        }
+      }
+    };
+  
+    gantt.attachEvent("onTaskLoading", function (task) {
+      if (task.deadline)
+        task.deadline = gantt.date.parseDate(task.deadline, "xml_date");
+      return true;
+    });
 
     gantt.init(this.ganttContainer.nativeElement);
   }

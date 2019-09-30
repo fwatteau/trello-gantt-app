@@ -28,7 +28,3 @@ form {
 .menu-spacer {
     flex: 1 1 auto;
 }
-
-.today {
-    background-color: darkred;
-}

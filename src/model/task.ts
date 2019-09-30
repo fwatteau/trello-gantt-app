@@ -3,6 +3,7 @@ export class Task {
   type: string = "task";
   start_date: string;
   end_date: string;
+  deadline: string;
   text: string;
   listName: string;
   descr: string;

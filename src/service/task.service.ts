@@ -28,6 +28,23 @@ export class TaskService {
         let startDateItem:any;
         let endDateItem:any;
         let endDate: Moment;
+        let deadlineDateItem:any;
+        let deadlineDate: Moment;
+
+        // On récupére la date d'echeance si elle existe
+        if (conf.setting.fieldDeadlineDate) {
+          deadlineDateItem = card.customFieldItems
+            .filter((field) => {
+              return field.idCustomField === conf.setting.fieldDeadlineDate;
+            })
+            .pop();
+
+          if (deadlineDateItem && deadlineDateItem.value.date) {
+            deadlineDate = moment(deadlineDateItem.value.date);
+          }
+        } else {
+          if (card.due) deadlineDate = moment(card.due);
+        }
 
         // On récupére la date de fin si elle existe
         if (conf.setting.fieldEndDate) {
@@ -57,7 +74,6 @@ export class TaskService {
 
         // Aucune des 2 dates renseignées
         if (endDate == null && startDate == null) {
-
           if (card.due) {
             startDate = moment(card.due);
             endDate = startDate.clone();
@@ -98,7 +114,19 @@ export class TaskService {
           t.descr = card.desc;
           t.start_date = startDate.toISOString();
           t.end_date = endDate.toISOString();
-          t.progress = 1;
+          if (deadlineDate) {
+            t.deadline = deadlineDate.toISOString();
+            if (deadlineDate.isSameOrAfter(startDate)
+                  && deadlineDate.isSameOrBefore(endDate)) {
+                    const dd = moment.duration(deadlineDate.diff(startDate));
+                    const ed = moment.duration(endDate.diff(startDate));
+                    t.progress = dd.asDays() / ed.asDays();
+            } else if (deadlineDate.isSameOrAfter(startDate)) {
+              t.progress = 1;
+            } else {
+              t.progress = 0;
+            }
+          }
           if (list)
             t.listName = list.name;
           if (card.labels && card.labels[0]) {

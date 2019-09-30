@@ -18,6 +18,14 @@
     </mat-select>
   </mat-form-field>
   <mat-form-field>
+    <mat-select placeholder="Date d'échéance" [(ngModel)]="conf.setting.fieldDeadlineDate" name="deadlineDate">
+      <mat-option value="">Date d'échéance</mat-option>
+      <mat-option *ngFor="let customDate of customDates" [value]="customDate.id">
+        {{customDate.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
     <input matInput type="number" placeholder="Durée par défaut (si l'un des champs n'est pas renseigné)" [(ngModel)]="conf.setting.duration" name="duration">
   </mat-form-field>
   <mat-form-field>
