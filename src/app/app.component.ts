@@ -26,8 +26,8 @@ import * as moment from 'moment';
   providers: [TaskService, TrelloService]
 })
 export class AppComponent implements OnInit {
-  @ViewChild("gantt_here") ganttContainer: ElementRef;
-  @ViewChild("message") messageContainer: ElementRef;
+  @ViewChild("gantt_here", { static: true }) ganttContainer: ElementRef;
+  @ViewChild("message", { static: true }) messageContainer: ElementRef;
   boards: Observable<Board[]>;
   boardSelected: Board;
   filteredNumber: number = 0;
@@ -105,7 +105,7 @@ export class AppComponent implements OnInit {
 
     gantt.config.columns = [
       {name:"text",       label:"Action",  width:"*", tree:true },
-      {name:"start_date", label:"Date de début", align:"center" },
+      // {name:"start_date", label:"Date de début", align:"center" },
     ];
 
     gantt.init(this.ganttContainer.nativeElement);
@@ -240,7 +240,12 @@ export class AppComponent implements OnInit {
   }
 
   private static saveConfiguration(conf: BoardConfigurationService) {
-    localStorage.setItem(conf.board.id, JSON.stringify(conf));
+    const newConf = JSON.stringify(conf);
+    if (newConf) {
+      localStorage.setItem(conf.board.id, newConf);
+    } else {
+      console.error('Impossible d\'enregistrer la conf : ', conf);
+    }
   }
 
   public isSettingActive() {
