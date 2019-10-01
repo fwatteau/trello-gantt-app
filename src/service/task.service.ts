@@ -6,6 +6,7 @@ import {Moment} from "moment";
 import {BoardConfigurationService} from "./board.configuration.service";
 import {List} from "../model/list";
 import {GanttConfiguration} from "../model/gantt.configuration";
+import { Marker } from "src/model/marker";
 
 @Injectable()
 export class TaskService {
@@ -19,7 +20,7 @@ export class TaskService {
    * @param {Card[]} cards
    * @returns {Promise<Task[]>}
    */
-    get(cards: Card[], conf: BoardConfigurationService, gantConf: GanttConfiguration): Promise<Task[]>{
+    getTasks(cards: Card[], conf: BoardConfigurationService, gantConf: GanttConfiguration): Promise<Task[]>{
       const myTasks: Task[] = [];
       let listToDisplay: any[] = [];
 
@@ -169,18 +170,42 @@ export class TaskService {
       });
 
       // On affiche les groupements
-      listToDisplay.forEach(idList => {
+      listToDisplay.forEach(list => {
         const t = new Task();
-        t.id = idList.id;
-        t.text = idList.name;
+        t.id = list.id;
+        t.text = list.name;
         t.descr = "";
         t.progress = 0;
+        t.color = list.color;
         // t.marker = conf.setting.markerLists[list.id];
         t.type = "parent";
 
         myTasks.push(t);
       });
 
-      return Promise.resolve(myTasks.sort((a, b) => a.text.localeCompare(b.text)));
+      const tasks = myTasks.sort((a, b) => a.text.localeCompare(b.text));
+
+      return Promise.resolve(tasks);
+    }
+
+    getMarkers(cards: Card[], conf: BoardConfigurationService, gantConf: GanttConfiguration): Promise<Marker[]>{
+      let markers: Marker[] = [];
+
+      // On récupére l'id correspondant à la liste des jalons
+      if (conf.setting.fieldMarker) {
+        markers = markers.concat(
+          cards
+            .filter(c => c.idList === conf.setting.fieldMarker)
+            .map(c => {
+              const m = new Marker();
+              m.start_date = c.due ?  moment(c.due).toDate() : new Date();
+              m.text = c.desc ? c.desc : c.name;
+              m.title = c.name;
+              m.css = 'marker';
+              return m;
+            }));
+      }
+        
+      return Promise.resolve(markers);
     }
 }

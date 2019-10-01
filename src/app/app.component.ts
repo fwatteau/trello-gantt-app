@@ -196,6 +196,7 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       localStorage.setItem("ganttConf", JSON.stringify(result));
       this.initGantt();
+      this.updateGantt();
     });
   }
 
@@ -251,7 +252,7 @@ export class AppComponent implements OnInit {
           });
 
           // Ajout dans le Gantt
-          this.taskService.get(filteredCards, conf, gantConf)
+          this.taskService.getTasks(filteredCards, conf, gantConf)
             .then((data) => {
               const size = data.filter(c => c.type === "task").length;
               this.filteredNumber = cards.length - size;
@@ -265,6 +266,9 @@ export class AppComponent implements OnInit {
                 gantt.sort(conf.setting.sort_field, conf.setting.sort_direction);
               }
           });
+
+          this.taskService.getMarkers(cards, conf, gantConf)
+            .then(m => m.forEach(mker => gantt.addMarker(mker)));
         });
       });
     }
