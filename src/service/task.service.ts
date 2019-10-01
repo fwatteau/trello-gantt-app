@@ -21,7 +21,7 @@ export class TaskService {
    */
     get(cards: Card[], conf: BoardConfigurationService, gantConf: GanttConfiguration): Promise<Task[]>{
       const myTasks: Task[] = [];
-      let listToDisplay: string[] = [];
+      let listToDisplay: any[] = [];
 
       cards.forEach((card) => {
         let startDate: Moment;
@@ -137,31 +137,50 @@ export class TaskService {
           }
           t.marker = conf.setting.markerLists[card.idList];
           t.url = card.url;
-          if (gantConf.group_list) {
-            t.parent = card.idList;
-            listToDisplay.push(card.idList);
-          }
 
-          myTasks.push(t);
+          // On vérifie s'il faut regrouper les cartes
+          if (gantConf.group_by) {
+            let parent = card[gantConf.group_by];
+            // Recherche du libelle pour les listes
+            if (gantConf.group_by === 'idList') {
+              parent = conf.board.lists.filter(l => l.id === parent).pop();
+            }
+
+            if (Array.isArray(parent)) {
+              parent.forEach(p => {
+                t.parent = p.id;
+                listToDisplay.push(p);
+                myTasks.push(t);  
+              });
+            } else if (parent) {
+              t.parent = parent.id;
+              listToDisplay.push(parent);
+              myTasks.push(t);
+            } else {
+              parent = {id : 'orphelin', name: 'Sans parent'};
+              t.parent = parent.id;
+              listToDisplay.push(parent);
+              myTasks.push(t);
+            }
+          } else {
+            myTasks.push(t);
+          }
         }
       });
 
-      // On groupe par liste
+      // On affiche les groupements
       listToDisplay.forEach(idList => {
-        const list = conf.board.lists.filter(l => l.id === idList).pop();
         const t = new Task();
-        t.id = list.id;
-        t.text = list.name;
+        t.id = idList.id;
+        t.text = idList.name;
         t.descr = "";
-        /*t.start_date = startDate.toISOString();
-        t.end_date = endDate.toISOString();*/
         t.progress = 0;
-        t.marker = conf.setting.markerLists[list.id];
+        // t.marker = conf.setting.markerLists[list.id];
         t.type = "parent";
 
         myTasks.push(t);
       });
 
-      return Promise.resolve(myTasks);
+      return Promise.resolve(myTasks.sort((a, b) => a.text.localeCompare(b.text)));
     }
 }

@@ -5,4 +5,5 @@ export class GanttConfiguration {
   readonly: boolean = true;
   date_grid: string = "%d %M %Y";
   group_list: boolean = true;
+  group_by: string;
 }

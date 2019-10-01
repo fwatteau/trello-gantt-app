@@ -15,7 +15,14 @@
     <mat-form-field>
       <input matInput placeholder="Format de la date (entêtes)" [(ngModel)]="conf.date_scale" name="scale">
     </mat-form-field>
-    <mat-slide-toggle [(ngModel)]="conf.group_list" name="group">Grouper par liste</mat-slide-toggle>
+    <!--mat-slide-toggle [(ngModel)]="conf.group_list" name="group">Grouper par liste</mat-slide-toggle-->
+    <mat-form-field>
+      <mat-select placeholder="Grouper par" [(ngModel)]="conf.group_by" name="group">
+        <mat-option value="">Pas de groupement</mat-option>
+        <mat-option value="idList">Liste</mat-option>
+        <mat-option value="labels">Etiquettes</mat-option>
+      </mat-select>
+    </mat-form-field>
   </form>
 </div>
 <div mat-dialog-actions>
