@@ -20,6 +20,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import * as moment from 'moment';
 
+declare let gantt: any;
 @Component({
   selector: 'my-app',
   styleUrls: ['./app.component.css'],
