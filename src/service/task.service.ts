@@ -131,7 +131,9 @@ export class TaskService {
           }
           // Ajout des champs supplémentaires
           card.customFieldItems.forEach(c => {
-            if (c.value.date) {
+            if (!c.value) {
+              return;
+            } else if (c.value.date) {
               t[c.idCustomField] = moment(c.value.date).format('DD/MM/YYYY');
             } else if (c.value.text) {
               t[c.idCustomField] = c.value.text;
