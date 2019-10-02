@@ -117,27 +117,11 @@ export class AppComponent implements OnInit {
           return '<div></div>';
         }
       },
-      {name:"text",       label:"Action",  width:"*", tree:true },
-      // {name:"start_date", label:"Date de début", align:"center" },
+      {name:"text",       label:"Action",  width:"*", tree:true }
     ];
+
     gantt.locale.labels.section_deadline = "Deadline";
 
-
-/*    gantt.addTaskLayer(function draw_deadline(task) {
-      if (task.deadline) {
-        var el = document.createElement('div');
-        el.className = 'deadline';
-        var sizes = gantt.getTaskPosition(task, task.deadline);
-  
-        el.style.left = sizes.left + 'px';
-        el.style.top = sizes.top + 'px';
-  
-        el.setAttribute('title', gantt.templates.task_date(task.deadline));
-        return el;
-      }
-      return false;
-    });*/
-  
     gantt.templates.task_class = function (start, end, task) {
       if (task.deadline && end.valueOf() > task.deadline.valueOf()) {
         return 'overdue';
@@ -148,7 +132,7 @@ export class AppComponent implements OnInit {
       if (task.deadline) {
         if (end.valueOf() > task.deadline.valueOf()) {
           var overdue = Math.ceil(Math.abs((end.getTime() - task.deadline.getTime()) / (24 * 60 * 60 * 1000)));
-          var text = "<b>Overdue: " + overdue + " days</b>";
+          var text = "<b>En retard de " + overdue + " jour" + (overdue > 1 ? "s" : "") + "</b>";
           return text;
         }
       }
@@ -194,7 +178,12 @@ export class AppComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      localStorage.setItem("ganttConf", JSON.stringify(result));
+      const json = JSON.stringify(result);
+      if (json) {
+        localStorage.setItem("ganttConf", json);
+      } else {
+        console.error('Impossible de convertir la conf en json', result);
+      }
       this.initGantt();
       this.updateGantt();
     });
@@ -242,6 +231,10 @@ export class AppComponent implements OnInit {
         snackConf.verticalPosition = "bottom";
         snackConf.horizontalPosition = "center";
         snackConf.panelClass = "snack-container";
+        
+        gantt.config.columns.splice(2, gantt.config.columns.length - 2);
+        conf.setting.columns
+          .forEach(c => gantt.config.columns.push({name: c.id, label: c.name}));
 
         cards.subscribe((cards) => {
           // Filtre sur les membres, les listes ou le nom de la carte

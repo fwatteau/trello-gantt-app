@@ -19,9 +19,16 @@ export class DialogSettingComponent implements OnInit {
 
   ngOnInit() {
     this.customDates = this.conf.board.customFields.filter((cf) => cf.type === "date");
+    if (!Array.isArray(this.conf.setting.columns)) {
+      this.conf.setting.columns = [];
+    }
   }
 
   clean(): void {
     this.conf.setting = new SettingConfiguration();
+  }
+
+  compareObjects(o1: any, o2: any): boolean {
+    return o1 && o2 && o1.id === o2.id;
   }
 }

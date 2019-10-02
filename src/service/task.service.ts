@@ -115,6 +115,7 @@ export class TaskService {
           t.descr = card.desc;
           t.start_date = startDate.toISOString();
           t.end_date = endDate.toISOString();
+          // Gestion de la date d'échéance
           if (deadlineDate) {
             t.deadline = deadlineDate.toISOString();
             if (deadlineDate.isSameOrAfter(startDate)
@@ -128,6 +129,18 @@ export class TaskService {
               t.progress = 0;
             }
           }
+          // Ajout des champs supplémentaires
+          card.customFieldItems.forEach(c => {
+            if (c.value.date) {
+              t[c.idCustomField] = moment(c.value.date).format('DD/MM/YYYY');
+            } else if (c.value.text) {
+              t[c.idCustomField] = c.value.text;
+            } else if (c.value.number) {
+              t[c.idCustomField] = c.value.number;
+            } else if (c.value.checked) {
+              t[c.idCustomField] = '✔';
+            }
+          });
           if (list)
             t.listName = list.name;
           if (card.labels && card.labels[0]) {
@@ -199,8 +212,8 @@ export class TaskService {
             .map(c => {
               const m = new Marker();
               m.start_date = c.due ?  moment(c.due).toDate() : new Date();
-              m.text = c.desc ? c.desc : c.name;
-              m.title = c.name;
+              m.text = c.name;
+              m.title = c.desc ? c.desc : c.name;
               m.css = 'marker';
               return m;
             }));

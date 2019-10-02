@@ -39,6 +39,15 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Afficher les colonnes supplémentaires" 
+      [compareWith]="compareObjects"
+      [(ngModel)]="conf.setting.columns" multiple name="columns">
+      <mat-option *ngFor="let field of conf.board.customFields" [value]="field">
+        {{field.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <!--mat-divider></mat-divider>
   <mat-list>
     <h3 mat-subheader>Configuration des listes</h3>
