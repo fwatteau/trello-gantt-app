@@ -9,6 +9,7 @@ export class Card {
   labels: any[];
   desc: string;
   idMembers: string[];
+  idLabels: string[];
   customFieldItems: any[];
   stickers: any[];
   url: string;

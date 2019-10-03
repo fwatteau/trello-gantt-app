@@ -17,6 +17,13 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
+      <mat-select placeholder="Etiquettes" multiple="multiple" [(ngModel)]="data.filter.labels" name="labels">
+        <mat-option *ngFor="let label of data.board.labels" [value]="label.id">
+          {{label.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
         <input matInput placeholder="Nom de la carte" [(ngModel)]="data.filter.name" name="name">
     </mat-form-field>
     <mat-form-field *ngFor="let cf of data.board.customFields | type: ['list']">

@@ -270,8 +270,9 @@ export class AppComponent implements OnInit {
 
             return (!conf.filter.members.length || anyCard.idMembers.filter((value: string) => conf.filter.members.includes(value)).length)
               && (!conf.filter.lists.length || !conf.filter.lists.includes(anyCard.idList))
+              && (!conf.filter.labels.length || anyCard.idLabels.filter(lab => conf.filter.labels.includes(lab)).length)
               && (regex.test(anyCard.name))
-              // Soit aucun filtre posé, soit au moins un custom fields qui ont matché
+              // Tous les filtres ont matchés
               && (filteredCustomFields.length === filteredCustomValidFields.length);
           });
 
