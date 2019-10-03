@@ -8,10 +8,33 @@ import {List} from "../model/list";
 import {GanttConfiguration} from "../model/gantt.configuration";
 import { Marker } from "src/model/marker";
 
+var numeral = require('numeral');
+
 @Injectable()
 export class TaskService {
     constructor() {
+      // load a locale
+      numeral.register('locale', 'fr', {
+        delimiters: {
+            thousands: ' ',
+            decimal: ','
+        },
+        abbreviations: {
+            thousand: 'k',
+            million: 'm',
+            billion: 'b',
+            trillion: 't'
+        },
+        ordinal : function (number) {
+            return number === 1 ? 'er' : 'ème';
+        },
+        currency: {
+            symbol: '€'
+        }
+      });
 
+      // switch between locales
+      numeral.locale('fr');
     }
 
   /**
@@ -131,14 +154,17 @@ export class TaskService {
           }
           // Ajout des champs supplémentaires
           card.customFieldItems.forEach(c => {
-            if (!c.value) {
+            if (c.idValue) {
+              const option = conf.board.customFields.filter(cf => cf.id === c.idCustomField).map(cf => cf.options.filter(o => o.id === c.idValue).pop()).pop();
+              t[c.idCustomField] = option ? option.value.text : c.idCustomField;
+            } else if (!c.value) {
               return;
             } else if (c.value.date) {
               t[c.idCustomField] = moment(c.value.date).format('DD/MM/YYYY');
             } else if (c.value.text) {
               t[c.idCustomField] = c.value.text;
             } else if (c.value.number) {
-              t[c.idCustomField] = c.value.number;
+              t[c.idCustomField] = numeral(c.value.number).format('0,0');
             } else if (c.value.checked) {
               t[c.idCustomField] = '✔';
             }

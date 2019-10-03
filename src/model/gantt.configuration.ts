@@ -6,4 +6,5 @@ export class GanttConfiguration {
   date_grid: string = "%d %M %Y";
   group_list: boolean = true;
   group_by: string;
+  autofit: boolean = true;
 }

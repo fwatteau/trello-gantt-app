@@ -139,14 +139,14 @@ export class AppComponent implements OnInit {
     };
   
     gantt.attachEvent("onTaskLoading", function (task) {
-      if (task.deadline)
+      if (task.deadline) {
         task.deadline = gantt.date.parseDate(task.deadline, "xml_date");
+      }
       return true;
     });
 
     gantt.init(this.ganttContainer.nativeElement);
   }
-
 
   openFilterDialog(): void {
     const board = this.trelloService.getBoard(this.boardSelected.id);
@@ -234,7 +234,7 @@ export class AppComponent implements OnInit {
         
         gantt.config.columns.splice(2, gantt.config.columns.length - 2);
         conf.setting.columns
-          .forEach(c => gantt.config.columns.push({name: c.id, label: c.name}));
+          .forEach(c => gantt.config.columns.push({name: c.id, label: c.name, align: 'right', resize: true}));
 
         cards.subscribe((cards) => {
           // Filtre sur les membres, les listes ou le nom de la carte
