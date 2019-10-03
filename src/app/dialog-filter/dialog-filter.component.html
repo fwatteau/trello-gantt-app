@@ -19,6 +19,34 @@
     <mat-form-field>
         <input matInput placeholder="Nom de la carte" [(ngModel)]="data.filter.name" name="name">
     </mat-form-field>
+    <mat-form-field *ngFor="let cf of data.board.customFields | type: ['list']">
+        <mat-select [placeholder]="cf.name" multiple="multiple" [(ngModel)]="data.filter.customFields[cf.id]" [name]="cf.id">
+          <mat-option *ngFor="let option of cf.options" [value]="option.id">
+            {{option.value.text}}
+          </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngFor="let cf of data.board.customFields | type: 'text'">
+        <input matInput [placeholder]="cf.name" [(ngModel)]="data.filter.customFields[cf.id]" [name]="cf.id" *ngIf="cf.type === 'text'">
+    </mat-form-field>
+    <span *ngFor="let cf of data.board.customFields | type: ['date', 'number']">
+      <mat-form-field class="input-range" *ngIf="cf.type === 'date'">
+        <input matInput [matDatepicker]="picker" [placeholder]="cf.name + ' (du ...)'" [(ngModel)]="data.filter.customFields[cf.id].min" [name]="cf.id + '-min'">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="input-range" *ngIf="cf.type === 'number'">
+        <input matInput type="number" [placeholder]="cf.name + ' mini'" [(ngModel)]="data.filter.customFields[cf.id].min" [name]="cf.id + '-min'" *ngIf="cf.type === 'number'">
+      </mat-form-field>
+      <mat-form-field class="input-range" *ngIf="cf.type === 'date'">
+        <input matInput [matDatepicker]="picker" [placeholder]="cf.name + ' (au ...)'" [(ngModel)]="data.filter.customFields[cf.id].max" [name]="cf.id + '-max'">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field class="input-range" *ngIf="cf.type === 'number'">
+        <input matInput type="number" [placeholder]="cf.name + ' maxi'" [(ngModel)]="data.filter.customFields[cf.id].max" [name]="cf.id + '-max'" *ngIf="cf.type === 'number'">
+      </mat-form-field>
+    </span>
   </form>
 </div>
 <div mat-dialog-actions>

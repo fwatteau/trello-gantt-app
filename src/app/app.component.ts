@@ -153,8 +153,6 @@ export class AppComponent implements OnInit {
     board.subscribe((anyBoard) => {
       const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
       const dialogRef = this.dialog.open(DialogFilterComponent, {
-        maxHeight: "50%",
-        maxWidth: "75%",
         minWidth: "50%",
         data: conf
       });
@@ -171,8 +169,6 @@ export class AppComponent implements OnInit {
     let ganttConf = AppComponent.getGanttConfiguration();
 
     const dialogRef = this.dialog.open(DialogGanttComponent, {
-      maxHeight: "50%",
-      maxWidth: "75%",
       minWidth: "50%",
       data: ganttConf
     });
@@ -195,8 +191,6 @@ export class AppComponent implements OnInit {
       const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
       const dialogRef = this.dialog.open(DialogSettingComponent, {
         minWidth: "50%",
-        maxWidth: "75%",
-        maxHeight: "75%",
         data: conf
       });
 
@@ -237,11 +231,48 @@ export class AppComponent implements OnInit {
           .forEach(c => gantt.config.columns.push({name: c.id, label: c.name, align: 'right', resize: true}));
 
         cards.subscribe((cards) => {
+          const filteredCustomFields = Object.keys(conf.filter.customFields)
+              .filter(cf => (Array.isArray(conf.filter.customFields[cf]) && conf.filter.customFields[cf].length)
+                            || (typeof conf.filter.customFields[cf] === 'string' && conf.filter.customFields[cf])
+                            || (typeof conf.filter.customFields[cf] === 'object' 
+                            && Object.keys(conf.filter.customFields[cf])
+                                  .map(key => conf.filter.customFields[cf][key])
+                                  .filter(v => v)
+                                  .length));
           // Filtre sur les membres, les listes ou le nom de la carte
           const filteredCards = cards.filter((anyCard: Card) => {
+            const filteredCustomValidFields =  filteredCustomFields.filter(key => {
+              const custom = anyBoard.customFields.filter(cf => cf.id === key).pop();
+              const cardValue = anyCard.customFieldItems.filter(cf => cf.idCustomField === key).pop();
+              const filterValue = conf.filter.customFields[key];
+              // console.log(cardValue, filterValue);
+              // Si aucun filtre n'est posé, on conserve la carte
+              if (!filterValue || filterValue.length === 0) return true;
+              // Si la carte n'a pas de custom field correspondant, on rejette
+              if (!cardValue || cardValue.length === 0) return false;
+              switch (custom.type) {
+                case 'list' :
+                  return filterValue.includes(cardValue.idValue);
+                case 'date' : 
+                  return moment(cardValue.value.date).isSameOrAfter(filterValue.min ? filterValue.min : cardValue.value.date)
+                      && moment(cardValue.value.date).isSameOrBefore(filterValue.max ? filterValue.max : cardValue.value.date);
+                case 'number' :
+                  return cardValue.value.number >= (filterValue.min ? filterValue.min : 0)
+                    && cardValue.value.number <= (filterValue.max ? filterValue.max : cardValue.value.number);
+                case 'text' :
+                  const rex = new RegExp(filterValue, "i");
+                  return rex.test(cardValue.value.text);
+                default :
+                console.log(custom.type);
+                return true;
+              }
+            });
+
             return (!conf.filter.members.length || anyCard.idMembers.filter((value: string) => conf.filter.members.includes(value)).length)
               && (!conf.filter.lists.length || !conf.filter.lists.includes(anyCard.idList))
-              && (regex.test(anyCard.name));
+              && (regex.test(anyCard.name))
+              // Soit aucun filtre posé, soit au moins un custom fields qui ont matché
+              && (filteredCustomFields.length === filteredCustomValidFields.length);
           });
 
           // Ajout dans le Gantt

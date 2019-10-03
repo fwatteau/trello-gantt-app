@@ -9,7 +9,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
-import { MatOptionModule } from "@angular/material/core";
+import { MatOptionModule, MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
+import {MatDatepickerModule} from '@angular/material/datepicker'
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -27,6 +28,7 @@ import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import { DialogSettingComponent } from './dialog-setting/dialog-setting.component';
 import { DialogGanttComponent } from './dialog-gantt/dialog-gantt.component';
 import { ThiaComponent } from './thia/thia.component';
+import { TypePipe } from './type.pipe';
 
 @NgModule({
   imports:      [
@@ -44,6 +46,8 @@ import { ThiaComponent } from './thia/thia.component';
     MatButtonModule,
     MatIconModule,
     MatBadgeModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatInputModule,
     MatListModule,
     MatGridListModule,
@@ -52,8 +56,11 @@ import { ThiaComponent } from './thia/thia.component';
     MatToolbarModule,
     MatChipsModule,
     MatDividerModule],
-  declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent, DialogGanttComponent, ThiaComponent ],
+  declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent, DialogGanttComponent, ThiaComponent, TypePipe ],
   entryComponents: [DialogFilterComponent,DialogSettingComponent,DialogGanttComponent],
-  bootstrap:    [ AppComponent ]
+  bootstrap:    [ AppComponent ],
+  providers: [
+    {provide: MAT_DATE_LOCALE, useValue: 'fr-FR'},
+  ],
 })
 export class AppModule { }
