@@ -27,7 +27,6 @@ export class DialogFilterComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.data.board);
     this.data.board.customFields.forEach(cf => {
       if (!this.data.filter.customFields[cf.id]) {
         if (cf.type === 'list') this.data.filter.customFields[cf.id] = [];
