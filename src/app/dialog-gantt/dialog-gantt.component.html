@@ -10,6 +10,16 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field>
+      <input matInput [matDatepicker]="pickerStart" placeholder="Affiché du ..." [(ngModel)]="conf.start_date" name="start_date">
+      <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput [matDatepicker]="pickerEnd" placeholder="Affiché au ..." [(ngModel)]="conf.end_date" name="end_date">
+      <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
       <input matInput placeholder="Format de la date (tableau)" [(ngModel)]="conf.date_grid" name="grid">
     </mat-form-field>
     <mat-form-field>
@@ -23,6 +33,7 @@
         <mat-option value="labels">Etiquettes</mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-checkbox [(ngModel)]="conf.expand" name="expand">Déplier l'arbre à l'ouverture</mat-checkbox>
   </form>
 </div>
 <div mat-dialog-actions>

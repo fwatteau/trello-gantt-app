@@ -62,8 +62,9 @@ export class AppComponent implements OnInit {
     let ganttConf = AppComponent.getGanttConfiguration();
 
     if (ganttConf.xml_date) gantt.config.xml_date = ganttConf.xml_date;
+    if (ganttConf.start_date) gantt.config.start_date = moment(ganttConf.start_date).toDate();
+    if (ganttConf.end_date) gantt.config.end_date = moment(ganttConf.end_date).toDate();
     if (ganttConf.scale_unit) gantt.config.scale_unit = ganttConf.scale_unit;
-    // gantt.config.date_scale = "S%W (%M %Y)";
     if (ganttConf.date_scale) gantt.config.date_scale = ganttConf.date_scale;
     if (ganttConf.readonly) gantt.config.readonly = ganttConf.readonly;
     if (ganttConf.date_grid) gantt.config.date_grid = ganttConf.date_grid;
@@ -270,7 +271,7 @@ export class AppComponent implements OnInit {
 
             return (!conf.filter.members.length || anyCard.idMembers.filter((value: string) => conf.filter.members.includes(value)).length)
               && (!conf.filter.lists.length || !conf.filter.lists.includes(anyCard.idList))
-              && (!conf.filter.labels.length || anyCard.idLabels.filter(lab => conf.filter.labels.includes(lab)).length)
+              && (!conf.filter.labels || !conf.filter.labels.length || anyCard.idLabels.filter(lab => conf.filter.labels.includes(lab)).length)
               && (regex.test(anyCard.name))
               // Tous les filtres ont matchés
               && (filteredCustomFields.length === filteredCustomValidFields.length);

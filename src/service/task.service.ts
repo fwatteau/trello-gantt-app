@@ -210,21 +210,27 @@ export class TaskService {
         }
       });
 
-      // On affiche les groupements
-      listToDisplay.forEach(list => {
-        const t = new Task();
-        t.id = list.id;
-        t.text = list.name;
-        t.descr = "";
-        t.progress = 0;
-        t.color = list.color;
-        // t.marker = conf.setting.markerLists[list.id];
-        t.type = "parent";
-
-        myTasks.push(t);
-      });
-
+      // On trie les tâches par ordre alphabétique
       const tasks = myTasks.sort((a, b) => a.text.localeCompare(b.text));
+
+      // On affiche les groupements
+      listToDisplay
+        // Les listes sont ordonnées par position, les autres par ordre alphabétique
+        .sort((a, b) => a.pos && b.pos ? a.pos > b.pos : a.name.localeCompare(b.name))
+        .forEach(list => {
+          const t = new Task();
+          t.id = list.id;
+          t.text = list.name;
+          t.descr = "";
+          t.progress = 0;
+          t.color = list.color;
+          // Arbre ouvert / ferme
+          t["$open"] = gantConf.expand;
+          // t.marker = conf.setting.markerLists[list.id];
+          t.type = "parent";
+
+          myTasks.push(t);
+      });
 
       return Promise.resolve(tasks);
     }
