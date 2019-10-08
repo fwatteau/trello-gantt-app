@@ -5,13 +5,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ClipboardModule } from 'ngx-clipboard';
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatOptionModule, MAT_DATE_LOCALE, MatNativeDateModule } from "@angular/material/core";
-import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatDatepickerModule} from '@angular/material/datepicker'
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker'
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatExpansionModule } from "@angular/material/expansion";
@@ -25,7 +26,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
-import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DialogSettingComponent } from './dialog-setting/dialog-setting.component';
 import { DialogGanttComponent } from './dialog-gantt/dialog-gantt.component';
 import { ThiaComponent } from './thia/thia.component';
@@ -38,6 +39,7 @@ import { TypePipe } from './type.pipe';
     ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    ClipboardModule,
     FontAwesomeModule,
     MatFormFieldModule,
     MatSelectModule,

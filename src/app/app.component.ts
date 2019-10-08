@@ -19,8 +19,11 @@ import {GanttConfiguration} from "../model/gantt.configuration";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import * as moment from 'moment';
+import { TmplAstVariable } from "@angular/compiler";
+import { ClipboardService } from "ngx-clipboard";
 
 declare let gantt: any;
+
 @Component({
   selector: 'my-app',
   styleUrls: ['./app.component.css'],
@@ -35,7 +38,7 @@ export class AppComponent implements OnInit {
   filteredNumber: number = 0;
   version:string = environment.VERSION;
 
-  constructor(private taskService: TaskService, private trelloService: TrelloService, private dialog: MatDialog, private snackBar: MatSnackBar) {
+  constructor(private taskService: TaskService, private trelloService: TrelloService, private dialog: MatDialog, private snackBar: MatSnackBar, private _clipboardService: ClipboardService) {
 
   }
 
@@ -94,13 +97,29 @@ export class AppComponent implements OnInit {
         {view: "scrollbar", id: "scrollVer"}
       ]
     };
-    
-    gantt.attachEvent("onTaskClick", function(id){
-      const t = this.getTask(id);
-      if (t.url)
-        window.open(t.url,"cardWindow");
+    const clickCard = (id => {
+      const t = gantt.getTask(id);
+
+      if (t.url && ganttConf.openurl) {
+         window.open(t.url,"cardWindow");
+      }
+
+      if (this._clipboardService.isSupported) {
+        let col: string = '', colHeader: string = '';
+        Object.keys(t).forEach(k => {
+          col += t[k] ? `<td>${t[k]}</td>` : `<td>-</td>`;
+          colHeader += `<th>${k}</th>`;
+        });
+        
+        this._clipboardService.copyFromContent(`<table><tr>${colHeader}</tr><tr>${col}</tr></table>`);
+      } else {
+        console.info('La fonctionnalité copie n\'est pas supporté par votre navigateur');
+      }
+
       return true;
     });
+    gantt.bind(clickCard, this);
+    gantt.attachEvent("onTaskClick", clickCard);
 
     gantt.templates.task_text=function(start,end,task: Task){
       const marker = task.marker ? "<i class=\"fas " + task.marker + "\"></i> " : "";

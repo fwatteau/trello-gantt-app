@@ -9,5 +9,6 @@ export class GanttConfiguration {
   group_list: boolean = true;
   group_by: string;
   expand: boolean;
+  openurl: boolean = true;
   autofit: boolean = true;
 }
