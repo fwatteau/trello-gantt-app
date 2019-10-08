@@ -69,6 +69,32 @@ export class AppComponent implements OnInit {
     if (ganttConf.readonly) gantt.config.readonly = ganttConf.readonly;
     if (ganttConf.date_grid) gantt.config.date_grid = ganttConf.date_grid;
 
+    gantt.config.layout = {
+      css: "gantt_container",
+      cols: [
+        {
+          width:400,
+          min_width: 300,
+          rows:[
+            {view: "grid", scrollX: "gridScroll", scrollable: true, scrollY: "scrollVer"}, 
+     
+             // horizontal scrollbar for the grid
+            {view: "scrollbar", id: "gridScroll", group:"horizontal"} 
+          ]
+        },
+        {resizer: true, width: 1},
+        {
+          rows:[
+            {view: "timeline", scrollX: "scrollHor", scrollY: "scrollVer"},
+     
+            // horizontal scrollbar for the timeline
+            {view: "scrollbar", id: "scrollHor", group:"horizontal"}  
+          ]
+        },
+        {view: "scrollbar", id: "scrollVer"}
+      ]
+    };
+    
     gantt.attachEvent("onTaskClick", function(id){
       const t = this.getTask(id);
       if (t.url)
@@ -95,7 +121,7 @@ export class AppComponent implements OnInit {
 
       return "<b>" + stickers + marker + task.text + "</b><br/>" + task.descr;
     };
-
+ 
     gantt.attachEvent("onAfterSort",function(field, direction, parent){
       // your code here
       let conf:BoardConfigurationService = AppComponent.getConfiguration(this.boardSelected);
@@ -118,9 +144,9 @@ export class AppComponent implements OnInit {
           return '<div></div>';
         }
       },
-      {name:"text",       label:"Action",  width:"*", tree:true }
+      {name:"text", label:"Action",  min_width:250, tree:true }
     ];
-
+  
     gantt.locale.labels.section_deadline = "Deadline";
 
     gantt.templates.task_class = function (start, end, task) {
