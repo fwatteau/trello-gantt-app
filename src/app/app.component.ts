@@ -19,7 +19,6 @@ import {GanttConfiguration} from "../model/gantt.configuration";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import * as moment from 'moment';
-import { TmplAstVariable } from "@angular/compiler";
 import { ClipboardService } from "ngx-clipboard";
 
 declare let gantt: any;
@@ -105,15 +104,22 @@ export class AppComponent implements OnInit {
       }
 
       if (this._clipboardService.isSupported) {
-        let col: string = '', colHeader: string = '';
-        Object.keys(t).forEach(k => {
-          col += t[k] ? `<td>${t[k]}</td>` : `<td>-</td>`;
-          colHeader += `<th>${k}</th>`;
+        const board = this.trelloService.getBoard(this.boardSelected.id);
+        board.subscribe((anyBoard) => {
+          const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
+
+          let col: string = '', colHeader: string = '';
+          Object.keys(t).forEach(k => {
+            col += t[k] ? `<td>${t[k]}</td>` : `<td>-</td>`;
+            const header = conf.board.customFields.filter(cf => cf.id === k).map(cf => cf.name).pop();
+            colHeader += `<th>${header ? header : k}</th>`;
+          });
+          
+          this._clipboardService.copyFromContent(`<table><tr>${colHeader}</tr><tr>${col}</tr></table>`);
+          this.snackBar.open('Tâche copiée dans le presse-papier', 'Fermer', {duration: 1000});
         });
-        
-        this._clipboardService.copyFromContent(`<table><tr>${colHeader}</tr><tr>${col}</tr></table>`);
       } else {
-        console.info('La fonctionnalité copie n\'est pas supporté par votre navigateur');
+        console.info('La fonctionnalité copie n\'est pas supportée par votre navigateur');
       }
 
       return true;
@@ -155,9 +161,13 @@ export class AppComponent implements OnInit {
       {
         name: "overdue", label: "", width: 38, template: function (obj) {
           if (obj.deadline) {
-            var deadline = gantt.date.parseDate(obj.deadline, "xml_date");
-            if (deadline && obj.end_date > deadline) {
-              return '<div class="overdue-indicator">!</div>';
+            var deadline = gantt.date.parseDate(obj.deadline, "%d/%m/%Y");
+            if (obj.end_date.valueOf() > deadline.valueOf()) {
+              const overdue = Math.ceil(Math.abs((obj.end_date.getTime() - deadline.getTime()) / (24 * 60 * 60 * 1000))) - 1;
+
+              if (overdue > 0) {
+                return '<div class="overdue-indicator">!</div>';
+              }
             }
           }
           return '<div></div>';
@@ -169,29 +179,61 @@ export class AppComponent implements OnInit {
     gantt.locale.labels.section_deadline = "Deadline";
 
     gantt.templates.task_class = function (start, end, task) {
-      if (task.deadline && end.valueOf() > task.deadline.valueOf()) {
-        return 'overdue';
+      if (task.deadline) {
+        const deadline = gantt.date.parseDate(task.deadline, "%d/%m/%Y");
+        if (end.valueOf() > deadline.valueOf()) {
+          const overdue = Math.ceil(Math.abs((end.getTime() - deadline.getTime()) / (24 * 60 * 60 * 1000))) - 1;
+          if (overdue > 0) {
+            return `${task.className} overdue`;
+          }
+        }
       }
+      return task.className;
     };
   
     gantt.templates.rightside_text = function (start, end, task) {
       if (task.deadline) {
-        if (end.valueOf() > task.deadline.valueOf()) {
-          var overdue = Math.ceil(Math.abs((end.getTime() - task.deadline.getTime()) / (24 * 60 * 60 * 1000)));
-          var text = "<b>En retard de " + overdue + " jour" + (overdue > 1 ? "s" : "") + "</b>";
-          return text;
+        var deadline = gantt.date.parseDate(task.deadline, "%d/%m/%Y");
+        if (end.valueOf() > deadline.valueOf()) {
+          var overdue = Math.ceil(Math.abs((end.getTime() - deadline.getTime()) / (24 * 60 * 60 * 1000))) - 1;
+          if (overdue > 0) {
+            return `<b>En retard de ${overdue} jour${overdue > 1 ? 's' : ''}</b>`;
+          }
+          return '';
         }
       }
     };
-  
-    gantt.attachEvent("onTaskLoading", function (task) {
-      if (task.deadline) {
-        task.deadline = gantt.date.parseDate(task.deadline, "xml_date");
-      }
-      return true;
-    });
 
     gantt.init(this.ganttContainer.nativeElement);
+  }
+
+  copyAll(): void {
+    const board = this.trelloService.getBoard(this.boardSelected.id);
+        board.subscribe((anyBoard) => {
+          const conf:BoardConfigurationService = AppComponent.getConfiguration(anyBoard);
+          const data = gantt.serialize().data.filter((t: Task) => t.type === 'task');
+          let colsHeader = '';
+          let body = '';
+
+          
+          data.forEach(t => {
+            let col = '', colHeader = '';
+            Object.keys(t).forEach(k => {
+              col += t[k] ? `<td>${t[k]}</td>` : `<td>-</td>`;
+              if (!colsHeader) {
+                const header = conf.board.customFields.filter(cf => cf.id === k).map(cf => cf.name).pop();
+                colHeader += `<th>${header ? header : k}</th>`;
+              }
+            });
+            body += `<tr>${col}</tr>`;
+            if (!colsHeader) {
+              colsHeader = colHeader;
+            }
+          });
+          
+          this._clipboardService.copyFromContent(`<table><thead><tr>${colsHeader}</tr></thead><tbody>${body}</tbody></table>`);
+          this.snackBar.open('Tâche(s) copiée(s) dans le presse-papier', 'Fermer', {duration: 1000});
+        });
   }
 
   openFilterDialog(): void {
@@ -291,7 +333,7 @@ export class AppComponent implements OnInit {
               const custom = anyBoard.customFields.filter(cf => cf.id === key).pop();
               const cardValue = anyCard.customFieldItems.filter(cf => cf.idCustomField === key).pop();
               const filterValue = conf.filter.customFields[key];
-              // console.log(cardValue, filterValue);
+
               // Si aucun filtre n'est posé, on conserve la carte
               if (!filterValue || filterValue.length === 0) return true;
               // Si la carte n'a pas de custom field correspondant, on rejette
@@ -359,6 +401,7 @@ export class AppComponent implements OnInit {
     }
 
     conf.board = boardSelected;
+
     return conf;
   }
 

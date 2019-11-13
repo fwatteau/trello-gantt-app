@@ -43,22 +43,16 @@
     <mat-select placeholder="Afficher les colonnes supplémentaires" 
       [compareWith]="compareObjects"
       [(ngModel)]="conf.setting.columns" multiple name="columns">
+      <mat-option [value]="getVirtualField('deadline', 'Echéance', 'date')">Echéance</mat-option>
       <mat-option *ngFor="let field of conf.board.customFields" [value]="field">
         {{field.name}}
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <!--mat-divider></mat-divider>
-  <mat-list>
-    <h3 mat-subheader>Configuration des listes</h3>
-    <mat-list-item *ngFor="let list of conf.board.lists">
-      <h4 mat-line>
-          <i class="fas" [ngClass]="conf.setting.markerLists[list.id]"></i>
-          {{list.name}}
-      </h4>
-      <input matInput placeholder="Expl : fa-skull-crossbones" [(ngModel)]="conf.setting.markerLists[list.id]"  name="marker">
-    </mat-list-item>
-  </mat-list-->
+  <mat-divider></mat-divider>
+  <mat-form-field>
+      <input matInput placeholder="Définir une couleur unique pour toutes les cartes" [(colorPicker)]="conf.setting.color" [style.background]="conf.setting.color" name="color" [cpOKButton]="true" [cpCancelButton]="true" cpCancelButtonText="Effacer" (colorPickerCancel)="conf.setting.color = ''"/>
+  </mat-form-field>
   </form>
 </div>
 <div mat-dialog-actions>

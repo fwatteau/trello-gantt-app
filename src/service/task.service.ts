@@ -138,9 +138,12 @@ export class TaskService {
           t.descr = card.desc;
           t.start_date = startDate.toISOString();
           t.end_date = endDate.toISOString();
+          t.progress = 1;
+          t.deadline = '';
           // Gestion de la date d'échéance
           if (deadlineDate) {
-            t.deadline = deadlineDate.toISOString();
+            t.deadline = deadlineDate.format('DD/MM/YYYY');
+
             if (deadlineDate.isSameOrAfter(startDate)
                   && deadlineDate.isSameOrBefore(endDate)) {
                     const dd = moment.duration(deadlineDate.diff(startDate));
@@ -152,8 +155,29 @@ export class TaskService {
               t.progress = 0;
             }
           }
+
           // Ajout des champs supplémentaires
-          card.customFieldItems.forEach(c => {
+          conf.board.customFields.forEach(cf => {
+            const vcf = card.customFieldItems.filter(ccf => cf.id === ccf.idCustomField).pop();
+            if (!vcf || !vcf.value) {
+              t[cf.id] = '-';
+            } else if (vcf.idValue) {
+              const option = cf.options.filter(o => o.id === vcf.idValue).pop();
+              t[cf.id] = option ? option.value.text : vcf.idCustomField;
+            } else if (vcf.value.date) {
+              t[cf.id] = moment(vcf.value.date).format('DD/MM/YYYY');
+            } else if (vcf.value.text) {
+              t[cf.id] = vcf.value.text;
+            } else if (vcf.value.number) {
+              t[cf.id] = numeral(vcf.value.number).format('0,0');
+            } else if (vcf.value.checked) {
+              t[cf.id] = '✔';
+            } else {
+              t[cf.id] = vcf.value;
+            }
+          });
+
+          /*card.customFieldItems.forEach(c => {
             if (c.idValue) {
               const option = conf.board.customFields.filter(cf => cf.id === c.idCustomField).map(cf => cf.options.filter(o => o.id === c.idValue).pop()).pop();
               t[c.idCustomField] = option ? option.value.text : c.idCustomField;
@@ -168,10 +192,16 @@ export class TaskService {
             } else if (c.value.checked) {
               t[c.idCustomField] = '✔';
             }
-          });
-          if (list)
+          });*/
+
+          if (list) {
             t.listName = list.name;
-          if (card.labels && card.labels[0]) {
+          }
+          
+          // On définit la couleur
+          if (conf.setting.color) {
+            t.color = conf.setting.color;
+          } else if (card.labels && card.labels[0]) {
             t.color = card.labels[0].color;
           }
           if (card.stickers.length) {
@@ -199,7 +229,7 @@ export class TaskService {
               listToDisplay.push(parent);
               myTasks.push(t);
             } else {
-              parent = {id : 'orphelin', name: 'Sans parent'};
+              parent = {id : 'orphelin', name: 'Sans parent', color:'#000'};
               t.parent = parent.id;
               listToDisplay.push(parent);
               myTasks.push(t);
@@ -224,6 +254,7 @@ export class TaskService {
           t.descr = "";
           t.progress = 0;
           t.color = list.color;
+          t.className = 'list';
           // Arbre ouvert / ferme
           t["$open"] = gantConf.expand;
           // t.marker = conf.setting.markerLists[list.id];

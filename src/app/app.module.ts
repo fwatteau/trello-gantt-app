@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ClipboardModule } from 'ngx-clipboard';
+import { ColorPickerModule } from 'ngx-color-picker';
 import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
 import { MatChipsModule } from "@angular/material/chips";
@@ -40,6 +41,7 @@ import { TypePipe } from './type.pipe';
     HttpClientModule,
     BrowserAnimationsModule,
     ClipboardModule,
+    ColorPickerModule,
     FontAwesomeModule,
     MatFormFieldModule,
     MatSelectModule,

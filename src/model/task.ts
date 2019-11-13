@@ -3,6 +3,7 @@ export class Task {
   type: string = "task";
   start_date: string;
   end_date: string;
+  due_date: string;
   deadline: string;
   text: string;
   listName: string;
@@ -11,6 +12,7 @@ export class Task {
   duration: number;
   parent: string;
   color: string;
+  className: string;
   marker: boolean;
   stickers: string[] = [];
   url: string;

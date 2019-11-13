@@ -1,7 +1,7 @@
 <!-- header -->
 <div class="container">
   <mat-toolbar color="primary">
-    <h1 [title]="version">Gantt à maman</h1>
+    <h1 [title]="version">Gantt à maman {{version}}</h1>
     <span class="menu-spacer"></span>
     <button mat-mini-fab class="board-icon" (click)="openGanttDialog()" color="accent" title="Configuration du Gantt">
       <mat-icon>build</mat-icon>
@@ -25,6 +25,9 @@
       </button>
       <button mat-mini-fab class="board-icon" (click)="openSettingDialog()" [color]="isSettingActive() ? 'primary' : 'warn'" title="Configuration du Gantt pour ce tableau">
         <mat-icon>settings</mat-icon>
+      </button>
+      <button mat-mini-fab class="board-icon" (click)="copyAll()" color="accent" title="Copier toutes les lignes visibles">
+        <mat-icon>file_copy</mat-icon>
       </button>
     </div>
   </mat-toolbar>
