@@ -173,7 +173,7 @@ export class AppComponent implements OnInit {
           return '<div></div>';
         }
       },
-      {name:"text", label:"Action",  min_width:250, tree:true }
+      {name:"text", label:"Action",  min_width:200, width:400, tree:true }
     ];
   
     gantt.locale.labels.section_deadline = "Deadline";
