@@ -67,4 +67,21 @@
 <div mat-dialog-actions>
   <button mat-button [mat-dialog-close]="conf" (click)="clean()">Effacer</button>
   <button mat-button [mat-dialog-close]="conf">Ok</button>
-</div>
+</div>  <mat-form-field>
+    <mat-select placeholder="Trier les cartes par "
+                [(ngModel)]="conf.setting.orderBy" name="orderBy">
+      <mat-option value="text">Nom de la carte</mat-option>
+      <mat-option value="pos">Position dans la liste Trello</mat-option>
+      <mat-option value="start_date">Date de dÃ©but</mat-option>
+      <mat-option value="end_date">Date de fin</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Trier les cartes par "
+                [(ngModel)]="conf.setting.orderBy" name="orderBy">
+      <mat-option value="text">Nom de la carte</mat-option>
+      <mat-option value="pos">Position dans la liste Trello</mat-option>
+      <mat-option value="start_date">Date de dÃ©but</mat-option>
+      <mat-option value="end_date">Date de fin</mat-option>
+    </mat-select>
+  </mat-form-field>
