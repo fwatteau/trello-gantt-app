@@ -13,4 +13,4 @@ export class SettingConfiguration {
   orderBy: string = 'text';
   sort_field: string;
   sort_direction: boolean;
-}
+} 

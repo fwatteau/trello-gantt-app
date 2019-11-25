@@ -7,8 +7,9 @@ import {BoardConfigurationService} from "./board.configuration.service";
 import {List} from "../model/list";
 import {GanttConfiguration} from "../model/gantt.configuration";
 import { Marker } from "src/model/marker";
+import * as numeral from 'numeral';
 
-var numeral = require('numeral');
+// var numeral = require('numeral');
 
 @Injectable()
 export class TaskService {
@@ -170,8 +171,8 @@ export class TaskService {
               t[cf.id] = moment(vcf.value.date).format('DD/MM/YYYY');
             } else if (vcf.value.text) {
               t[cf.id] = vcf.value.text;
-            } else if (vcf.value.number) {
-              t[cf.id] = numeral(vcf.value.number).format('0,0');
+            } else if (vcf.value.number) {             
+              t[cf.id] = numeral(+vcf.value.number).format('0,0[.]000');
             } else if (vcf.value.checked) {
               t[cf.id] = '✔';
             } else {
