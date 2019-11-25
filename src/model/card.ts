@@ -12,5 +12,4 @@ export class Card {
   customFieldItems: any[];
   stickers: any[];
   url: string;
-  pos: number;
 } 

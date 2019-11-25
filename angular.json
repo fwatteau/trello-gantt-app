@@ -26,8 +26,7 @@
               "src/styles.css"
             ],
             "scripts": [
-              "node_modules/hammerjs/hammer.min.js",
-              "node_modules/numeral/locales/fr.js"
+              "node_modules/hammerjs/hammer.min.js"
             ]
           },
           "configurations": {
