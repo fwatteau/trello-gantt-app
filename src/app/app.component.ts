@@ -214,7 +214,7 @@ export class AppComponent implements OnInit {
           const data = gantt.serialize().data.filter((t: Task) => t.type === 'task');
           let colsHeader = '';
           let body = '';
-
+          const s = data.length > 1 ? 's' : '';
           
           data.forEach(t => {
             let col = '', colHeader = '';
@@ -232,7 +232,7 @@ export class AppComponent implements OnInit {
           });
           
           this._clipboardService.copyFromContent(`<table><thead><tr>${colsHeader}</tr></thead><tbody>${body}</tbody></table>`);
-          this.snackBar.open('Tâche(s) copiée(s) dans le presse-papier', 'Fermer', {duration: 1000});
+          this.snackBar.open(`Tâche${s} copiée${s} dans le presse-papier`, 'Fermer', {duration: 1000});
         });
   }
 
