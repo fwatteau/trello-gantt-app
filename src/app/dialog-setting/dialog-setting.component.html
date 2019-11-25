@@ -49,6 +49,15 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <mat-form-field>
+    <mat-select placeholder="Trier les cartes par "
+                [(ngModel)]="conf.setting.orderBy" name="orderBy">
+      <mat-option value="text">Nom de la carte</mat-option>
+      <mat-option value="pos">Ordre de la carte dans la liste</mat-option>
+      <mat-option value="start_date">Date de début</mat-option>
+      <mat-option value="end_date">Date de fin</mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-divider></mat-divider>
   <mat-form-field>
       <input matInput placeholder="Définir une couleur unique pour toutes les cartes" [(colorPicker)]="conf.setting.color" [style.background]="conf.setting.color" name="color" [cpOKButton]="true" [cpCancelButton]="true" cpCancelButtonText="Effacer" (colorPickerCancel)="conf.setting.color = ''"/>

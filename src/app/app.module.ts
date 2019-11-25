@@ -30,7 +30,6 @@ import { DialogFilterComponent } from './dialog-filter/dialog-filter.component';
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DialogSettingComponent } from './dialog-setting/dialog-setting.component';
 import { DialogGanttComponent } from './dialog-gantt/dialog-gantt.component';
-import { ThiaComponent } from './thia/thia.component';
 import { TypePipe } from './type.pipe';
 
 @NgModule({
@@ -62,7 +61,7 @@ import { TypePipe } from './type.pipe';
     MatToolbarModule,
     MatChipsModule,
     MatDividerModule],
-  declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent, DialogGanttComponent, ThiaComponent, TypePipe ],
+  declarations: [ AppComponent, HelloComponent, DialogFilterComponent, DialogSettingComponent, DialogGanttComponent, TypePipe ],
   entryComponents: [DialogFilterComponent,DialogSettingComponent,DialogGanttComponent],
   bootstrap:    [ AppComponent ],
   providers: [

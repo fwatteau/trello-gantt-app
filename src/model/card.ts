@@ -4,6 +4,7 @@ export class Card {
   idList: string;
   due: string;
   name: string;
+  pos: number;
   labels: any[];
   desc: string;
   idMembers: string[];

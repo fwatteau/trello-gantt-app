@@ -46,6 +46,7 @@ export class TaskService {
     getTasks(cards: Card[], conf: BoardConfigurationService, gantConf: GanttConfiguration): Promise<Task[]>{
       const myTasks: Task[] = [];
       let listToDisplay: any[] = [];
+      const orderBy = conf.setting.orderBy ? conf.setting.orderBy : 'text';
 
       cards.forEach((card) => {
         let startDate: Moment;
@@ -140,6 +141,7 @@ export class TaskService {
           t.end_date = endDate.toISOString();
           t.progress = 1;
           t.deadline = '';
+          t.pos = card.pos;
           // Gestion de la date d'échéance
           if (deadlineDate) {
             t.deadline = deadlineDate.format('DD/MM/YYYY');
@@ -176,23 +178,6 @@ export class TaskService {
               t[cf.id] = vcf.value;
             }
           });
-
-          /*card.customFieldItems.forEach(c => {
-            if (c.idValue) {
-              const option = conf.board.customFields.filter(cf => cf.id === c.idCustomField).map(cf => cf.options.filter(o => o.id === c.idValue).pop()).pop();
-              t[c.idCustomField] = option ? option.value.text : c.idCustomField;
-            } else if (!c.value) {
-              return;
-            } else if (c.value.date) {
-              t[c.idCustomField] = moment(c.value.date).format('DD/MM/YYYY');
-            } else if (c.value.text) {
-              t[c.idCustomField] = c.value.text;
-            } else if (c.value.number) {
-              t[c.idCustomField] = numeral(c.value.number).format('0,0');
-            } else if (c.value.checked) {
-              t[c.idCustomField] = '✔';
-            }
-          });*/
 
           if (list) {
             t.listName = list.name;
@@ -241,7 +226,14 @@ export class TaskService {
       });
 
       // On trie les tâches par ordre alphabétique
-      const tasks = myTasks.sort((a, b) => a.text.localeCompare(b.text));
+      let tasks;
+      if (myTasks.length) {
+        if (typeof myTasks[0][orderBy] === 'number') {
+          tasks = myTasks.sort((a, b) => a[orderBy] - b[orderBy]);
+        } else {
+          tasks = myTasks.sort((a, b) => a[orderBy].localeCompare(b[orderBy]));
+        }
+      }
 
       // On affiche les groupements
       listToDisplay

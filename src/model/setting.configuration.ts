@@ -10,6 +10,7 @@ export class SettingConfiguration {
   markerLists: any = {};
   duration: number = 1;
   delay: number = 0;
+  orderBy: string = 'text';
   sort_field: string;
   sort_direction: boolean;
 }

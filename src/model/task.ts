@@ -16,4 +16,5 @@ export class Task {
   marker: boolean;
   stickers: string[] = [];
   url: string;
+  pos: number;
 }
