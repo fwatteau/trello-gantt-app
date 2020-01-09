@@ -31,7 +31,7 @@ L'application fonctionne sans base de données, elle s'appuie sur la connexion d
 - Export des lignes projets via le presse-papier
 
 
-## Aperçu des fonctionnalités
+## Ajout des branches GIT pour garder le lien :P
 
 - git clone https://gitlab.lillemetropole.fr/3D/gam.git
 - cd gam
