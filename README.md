@@ -29,3 +29,14 @@ L'application fonctionne sans base de données, elle s'appuie sur la connexion d
 - Personnalisation affichage (gestion des champs supplémentaires)
 - Possibilité de filter les cartes
 - Export des lignes projets via le presse-papier
+
+
+## Aperçu des fonctionnalités
+
+- git clone https://gitlab.lillemetropole.fr/3D/gam.git
+- cd gam
+- git remote -v
+- git remote add upstream https://github.com/fwatteau/trello-gantt-app.git
+- git remote -v
+- git fetch upstream
+- git checkout -b upstream_master upstream/master
