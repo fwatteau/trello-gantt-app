@@ -40,3 +40,5 @@ L'application fonctionne sans base de données, elle s'appuie sur la connexion d
 - git remote -v
 - git fetch upstream
 - git checkout -b upstream_master upstream/master
+
+test
