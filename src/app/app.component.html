@@ -1,7 +1,7 @@
 <!-- header -->
 <div class="container">
   <mat-toolbar color="primary">
-    <h1 [title]="version">Gantt à maman {{version}}</h1>
+    <h1 [title]="version">GAM - Gantt à la MEL {{version}}</h1>
     <span class="menu-spacer"></span>
     <button mat-mini-fab class="board-icon" (click)="openGanttDialog()" color="accent" title="Configuration du Gantt">
       <mat-icon>build</mat-icon>
@@ -12,21 +12,24 @@
   </mat-toolbar>
   <mat-toolbar>
     <mat-select [compareWith]="compareBoard" placeholder="Choisir un tableau"
-                [title]="filteredNumber+' élément(s) masqué(s)'"
-                [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()" name="board">
+      [title]="filteredNumber+' élément(s) masqué(s)'" [(ngModel)]="boardSelected" (ngModelChange)="updateGantt()"
+      name="board">
       <mat-option *ngFor="let board of boards | async" [value]="board">
         {{board.name}}
       </mat-option>
     </mat-select>
     <span class="menu-spacer"></span>
     <div *ngIf="boardSelected != null">
-      <button mat-mini-fab class="board-icon" (click)="openFilterDialog()" [color]="isFilterActive() ? 'primary' : 'warn'" title="Filtre du tableau">
+      <button mat-mini-fab class="board-icon" (click)="openFilterDialog()"
+        [color]="isFilterActive() ? 'primary' : 'warn'" title="Filtre du tableau">
         <mat-icon>filter_list</mat-icon>
       </button>
-      <button mat-mini-fab class="board-icon" (click)="openSettingDialog()" [color]="isSettingActive() ? 'primary' : 'warn'" title="Configuration du Gantt pour ce tableau">
+      <button mat-mini-fab class="board-icon" (click)="openSettingDialog()"
+        [color]="isSettingActive() ? 'primary' : 'warn'" title="Configuration du Gantt pour ce tableau">
         <mat-icon>settings</mat-icon>
       </button>
-      <button mat-mini-fab class="board-icon" (click)="copyAll()" color="accent" title="Copier toutes les lignes visibles">
+      <button mat-mini-fab class="board-icon" (click)="copyAll()" color="accent"
+        title="Copier toutes les lignes visibles">
         <mat-icon>file_copy</mat-icon>
       </button>
     </div>
