@@ -4,7 +4,7 @@
 Diagramme de Gantt à partir des cartes Trello
 
 **Pré-requis techniques :**
-- Angular 8
+- Angular 9
 - Node 10.9+
 
 ## Comment qui marche
@@ -40,5 +40,3 @@ L'application fonctionne sans base de données, elle s'appuie sur la connexion d
 - git remote -v
 - git fetch upstream
 - git checkout -b upstream_master upstream/master
-
-test
